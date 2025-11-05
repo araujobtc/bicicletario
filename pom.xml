@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.5.7</version>
 		<relativePath />
 	</parent>
 	
@@ -16,7 +16,7 @@
     <description>Microsserviço responsável pelo gerenciamento de aluguéis de bicicletas</description>
 	
 	<properties>
-    	<java.version>18</java.version>
+    	<java.version>21</java.version>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	
 		<sonar.organization>araujobtc</sonar.organization>
@@ -29,6 +29,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
 		<!-- Ferramentas de desenvolvimento -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,6 +37,14 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		
+	    <!-- JPA e Hibernate -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-data-jpa</artifactId>
+	    </dependency>
+		
+        <!-- Driver do MySQL: esta sendo definida automaticamente pelo Spring Boot Parent-->
 		
     	<!-- Testes -->
 		<dependency>
