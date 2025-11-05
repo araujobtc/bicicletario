@@ -4,8 +4,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.5</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>3.5.7</version>
+		<relativePath />
 	</parent>
 	
 	<groupId>com.bikeunirio.bicicletario</groupId>
@@ -13,9 +13,10 @@
 	<version>1.0</version>
 	
 	<name>aluguel</name>
-	<description>Microsserviço responsável pelo gerenciamento de aluguéis de bicicletas</description>
+    <description>Microsserviço responsável pelo gerenciamento de aluguéis de bicicletas</description>
 	
 	<properties>
+    	<java.version>21</java.version>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	
 		<sonar.organization>araujobtc</sonar.organization>
@@ -29,19 +30,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		
-	    <!-- JPA e Hibernate -->
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-starter-data-jpa</artifactId>
-	    </dependency>
-	    
-        <!-- Driver do PostgreSQL -->
-	    <dependency>
-	        <groupId>org.postgresql</groupId>
-	        <artifactId>postgresql</artifactId>
-	        <scope>runtime</scope>
-	    </dependency>
-		
 		<!-- Ferramentas de desenvolvimento -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -49,6 +37,14 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		
+	    <!-- JPA e Hibernate -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-data-jpa</artifactId>
+	    </dependency>
+		
+        <!-- Driver do MySQL: esta sendo definida automaticamente pelo Spring Boot Parent-->
 		
     	<!-- Testes -->
 		<dependency>
@@ -69,7 +65,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.10</version>
+				<version>0.8.14</version>
 				<executions>
 					<execution>
 						<goals>
@@ -78,7 +74,7 @@
 					</execution>
 					<execution>
 						<id>report</id>
-						<phase>prepare-package</phase>
+						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
@@ -89,7 +85,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.10.0.2594</version>
+				<version>4.0.0.4121</version>
 				<executions>
 					<execution>
 						<phase>verify</phase>
