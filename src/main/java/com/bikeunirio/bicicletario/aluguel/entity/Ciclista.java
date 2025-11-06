@@ -1,0 +1,117 @@
+package com.bikeunirio.bicicletario.aluguel.entity;
+
+import java.time.LocalDate;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "ciclistas")
+public class Ciclista {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+    private LocalDate nascimento;
+    private String cpf;
+    private String nacionalidade;
+    private String email;
+    private String urlFotoDocumento;
+    private String senha;
+
+    
+    @OneToOne(cascade = CascadeType.ALL) 
+    // Cascade.ALL: operações no Ciclista se propagam para Passaporte
+    @JoinColumn(name = "passaporte_id") 
+    // Cria uma FK na tabela ciclistas apontando para passaportes
+    private Passaporte passaporte;
+
+    @OneToOne(mappedBy = "ciclista", cascade = CascadeType.ALL)
+    // mappedBy indica que a FK está na tabela cartoes (campo ciclista)
+    private Cartao cartao;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public LocalDate getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(LocalDate nascimento) {
+		this.nascimento = nascimento;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getNacionalidade() {
+		return nacionalidade;
+	}
+
+	public void setNacionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getUrlFotoDocumento() {
+		return urlFotoDocumento;
+	}
+
+	public void setUrlFotoDocumento(String urlFotoDocumento) {
+		this.urlFotoDocumento = urlFotoDocumento;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public Passaporte getPassaporte() {
+		return passaporte;
+	}
+
+	public void setPassaporte(Passaporte passaporte) {
+		this.passaporte = passaporte;
+	}
+
+	public Cartao getCartao() {
+		return cartao;
+	}
+
+	public void setCartao(Cartao cartao) {
+		this.cartao = cartao;
+	}
+    
+}

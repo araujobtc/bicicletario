@@ -1,75 +1,77 @@
 package com.bikeunirio.bicicletario.aluguel.entity;
 
-/*
-import jakarta.persistence.Entity; import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType; import jakarta.persistence.Id;
-*/
-// @Entity
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "funcionarios")
 public class Funcionario {
-    /* * @Id @GeneratedValue(strategy = GenerationType.IDENTITY) */
-    private Long id;
 
-    private String email;
-    private String nome;
-    private Integer idade;
-    private String funcao;
-    private String cpf;
-    private String senha;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    // getters e setters
-    public Long getId() {
-        return id;
-    }
+	private String nome;
+	private Integer idade;
+	private String funcao;
+	private String cpf;
+	private String email;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private String senha;
 
-    public String getEmail() {
-        return email;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getNome() {
+		return nome;
+	}
 
-    public String getNome() {
-        return nome;
-    }
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+	public Integer getIdade() {
+		return idade;
+	}
 
-    public Integer getIdade() {
-        return idade;
-    }
+	public void setIdade(Integer idade) {
+		this.idade = idade;
+	}
 
-    public void setIdade(Integer idade) {
-        this.idade = idade;
-    }
+	public String getFuncao() {
+		return funcao;
+	}
 
-    public String getFuncao() {
-        return funcao;
-    }
+	public void setFuncao(String funcao) {
+		this.funcao = funcao;
+	}
 
-    public void setFuncao(String funcao) {
-        this.funcao = funcao;
-    }
+	public String getCpf() {
+		return cpf;
+	}
 
-    public String getCpf() {
-        return cpf;
-    }
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public String getSenha() {
-        return senha;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
 }
