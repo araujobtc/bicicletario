@@ -32,7 +32,6 @@ public class FuncionarioControllerTest {
         Long idExistente = 1L;
 
         Funcionario funcionarioMock = new Funcionario();
-        funcionarioMock.setId(idExistente);
         funcionarioMock.setNome("Funcionario Teste");
 
         when(funcionarioService.buscarFuncionarioPorId(anyLong()))
