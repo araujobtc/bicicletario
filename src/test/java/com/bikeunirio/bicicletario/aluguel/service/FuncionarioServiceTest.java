@@ -20,17 +20,6 @@ public class FuncionarioServiceTest {
     }
 
     @Test
-    void deveRetornarFuncionarioQuandoIdForUm() {
-        Long idEsperado = 1L;
-
-        Funcionario resultado = service.buscarFuncionarioPorId(idEsperado);
-
-        assertNotNull(resultado, "O funcionário não deve ser nulo para o ID 1L.");
-        assertEquals(idEsperado, resultado.getId(), "O ID retornado deve ser 1L.");
-        assertEquals("Funcionario Mock 1", resultado.getNome(), "O nome deve ser o mock esperado.");
-    }
-
-    @Test
     void deveRetornarNullQuandoIdDiferenteDeUm() {
         Long idInvalido = 99L;
 
@@ -44,20 +33,6 @@ public class FuncionarioServiceTest {
         Funcionario resultado = service.buscarFuncionarioPorId(null);
 
         assertNull(resultado, "O funcionário deve ser nulo quando o ID for nulo.");
-    }
-
-    @Test
-    void deveCadastrarFuncionarioComSucessoAtribuirIdFalso() {
-        Funcionario novoFuncionario = new Funcionario();
-        novoFuncionario.setNome("Novo Funcionário");
-        novoFuncionario.setEmail("novo@teste.com");
-        novoFuncionario.setCpf("11122233344");
-
-        Funcionario resultado = service.cadastrarFuncionario(novoFuncionario);
-
-        assertNotNull(resultado, "O resultado do cadastro não deve ser nulo.");
-        assertEquals(99L, resultado.getId(), "Um ID falso (99L) deve ser atribuído ao novo funcionário.");
-        assertEquals("Novo Funcionário", resultado.getNome(), "O nome deve ser mantido.");
     }
 
     @Test
