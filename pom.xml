@@ -21,6 +21,7 @@
     	
 		<sonar.organization>araujobtc</sonar.organization>
 		<sonar.projectKey>araujobtc_bicicletario</sonar.projectKey>
+    	<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	
 	<dependencies>
@@ -37,6 +38,13 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- Ferramentas de validacao -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
 		
 	    <!-- JPA e Hibernate -->
 	    <dependency>
@@ -57,6 +65,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
 	
 	<build>
 		<finalName>${project.name}</finalName>

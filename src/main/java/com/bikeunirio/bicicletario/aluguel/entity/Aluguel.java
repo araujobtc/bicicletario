@@ -1,6 +1,6 @@
 package com.bikeunirio.bicicletario.aluguel.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.bikeunirio.bicicletario.aluguel.enums.StatusAluguel;
 
@@ -39,10 +39,10 @@ public class Aluguel {
 	private Cartao cartao;
 
 	@Column(name = "data_inicio", nullable = false)
-	private LocalDate dataInicio;
+	private LocalDateTime dataInicio;
 
 	@Column(name = "data_fim")
-	private LocalDate dataFim;
+	private LocalDateTime dataFim;
 
 	@Column(nullable = false)
 	private Double valor;
@@ -79,19 +79,19 @@ public class Aluguel {
 		this.cartao = cartao;
 	}
 
-	public LocalDate getDataInicio() {
+	public LocalDateTime getDataInicio() {
 		return dataInicio;
 	}
 
-	public void setDataInicio(LocalDate dataInicio) {
+	public void setDataInicio(LocalDateTime dataInicio) {
 		this.dataInicio = dataInicio;
 	}
 
-	public LocalDate getDataFim() {
+	public LocalDateTime getDataFim() {
 		return dataFim;
 	}
 
-	public void setDataFim(LocalDate dataFim) {
+	public void setDataFim(LocalDateTime dataFim) {
 		this.dataFim = dataFim;
 	}
 
