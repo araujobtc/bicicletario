@@ -1,73 +1,65 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
+import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
 
+@ExtendWith(MockitoExtension.class)
 public class FuncionarioServiceTest {
+    public static final Funcionario FUNCIONARIO_VALIDO;
+    
+    static {
+        FUNCIONARIO_VALIDO = new Funcionario();
+        FUNCIONARIO_VALIDO.setNome("Isabelle");
+        FUNCIONARIO_VALIDO.setEmail("isa@exemplo.com");
+        FUNCIONARIO_VALIDO.setIdade(25);
+        FUNCIONARIO_VALIDO.setFuncao("Atendente");
+        FUNCIONARIO_VALIDO.setCpf("12345678901");
+        FUNCIONARIO_VALIDO.setSenha("senha123");
+    }
+	
 
-    private FuncionarioService service;
+    @InjectMocks
+    private FuncionarioService funcionarioService;
+    
+    @Mock
+    private FuncionarioRepository funcionarioRepository; // Mocka o Repository
 
-    @BeforeEach
-    void setUp() {
-        this.service = new FuncionarioService();
+    // GET funcionarios
+    @Test
+    void deveRetornarTodosOsFuncionarios() {
+        when(funcionarioRepository.findAll()).thenReturn(Arrays.asList(FUNCIONARIO_VALIDO));
+
+        List<Funcionario> resultado = funcionarioService.getAllFuncionarios();
+
+        assertThat(resultado).hasSize(1);
+        assertThat(resultado.get(0).getNome()).isEqualTo("Isabelle");
+        
+        verify(funcionarioRepository, times(1)).findAll();
     }
 
+    // POST funcionario
     @Test
-    void deveRetornarNullQuandoIdDiferenteDeUm() {
-        Long idInvalido = 99L;
+    void deveCriarFuncionarioComSucesso() {
+        when(funcionarioRepository.save(FUNCIONARIO_VALIDO)).thenReturn(FUNCIONARIO_VALIDO);
 
-        Funcionario resultado = service.buscarFuncionarioPorId(idInvalido);
+        Funcionario resultado = funcionarioService.createFuncionario(FUNCIONARIO_VALIDO);
 
-        assertNull(resultado, "O funcionário deve ser nulo para um ID diferente de 1L.");
-    }
-
-    @Test
-    void deveRetornarNullQuandoIdForNulo() {
-        Funcionario resultado = service.buscarFuncionarioPorId(null);
-
-        assertNull(resultado, "O funcionário deve ser nulo quando o ID for nulo.");
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoNomeForNulo() {
-        Funcionario novoFuncionario = new Funcionario();
-        novoFuncionario.setEmail("valido@teste.com");
-        novoFuncionario.setCpf("11122233344");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.cadastrarFuncionario(novoFuncionario);
-        }, "Deve lançar exceção quando o Nome for nulo.");
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoEmailForVazio() {
-        Funcionario novoFuncionario = new Funcionario();
-        novoFuncionario.setNome("Nome Valido");
-        novoFuncionario.setEmail(" "); // E-mail vazio (trim().isEmpty() deve capturar)
-        novoFuncionario.setCpf("11122233344");
-
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> {
-            service.cadastrarFuncionario(novoFuncionario);
-        }, "Deve lançar exceção quando o Email for vazio.");
-
-        assertEquals("O e-mail do funcionário é obrigatório para o cadastro.", excecao.getMessage());
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoCpfForNulo() {
-        Funcionario novoFuncionario = new Funcionario();
-        novoFuncionario.setNome("Nome Valido");
-        novoFuncionario.setEmail("valido@teste.com");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.cadastrarFuncionario(novoFuncionario);
-        }, "Deve lançar exceção quando o CPF for nulo.");
+        assertThat(resultado).isNotNull();
+        assertThat(resultado.getNome()).isEqualTo("Isabelle");
+        verify(funcionarioRepository, times(1)).save(FUNCIONARIO_VALIDO);
     }
 }
