@@ -1,26 +1,12 @@
-package com.bikeunirio.bicicletario.aluguel.entity;
+package com.bikeunirio.bicicletario.aluguel.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-@Entity
-@Table(name = "funcionarios")
-public class Funcionario {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long matricula;
+public class FuncionarioDTO {
 
 	@NotBlank(message = "O nome é obrigatório")
 	private String nome;
@@ -33,7 +19,7 @@ public class Funcionario {
 	private String funcao;
 
 	@NotBlank(message = "O CPF é obrigatório")
-    @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
+	@Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
 	private String cpf;
 
 	@NotBlank(message = "O e-mail é obrigatório")
@@ -43,13 +29,8 @@ public class Funcionario {
 	@NotBlank(message = "A senha é obrigatória")
 	private String senha;
 
-	public Long getId() {
-		return matricula;
-	}
-	
-	public Long getMatricula() {
-		return matricula;
-	}
+	@NotBlank(message = "A confirmação de senha é obrigatória")
+	private String confirmacaoSenha;
 
 	public String getNome() {
 		return nome;
@@ -99,4 +80,11 @@ public class Funcionario {
 		this.senha = senha;
 	}
 
+	public String getConfirmacaoSenha() {
+		return confirmacaoSenha;
+	}
+
+	public void setConfirmacaoSenha(String confirmacaoSenha) {
+		this.confirmacaoSenha = confirmacaoSenha;
+	}
 }

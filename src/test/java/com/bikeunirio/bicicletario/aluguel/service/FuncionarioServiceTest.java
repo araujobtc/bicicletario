@@ -1,6 +1,8 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,69 +15,59 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
+import com.bikeunirio.bicicletario.aluguel.enums.FuncionarioExemplos;
 import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class FuncionarioServiceTest {
-    public static final Funcionario FUNCIONARIO_VALIDO;
-    
-    static {
-        FUNCIONARIO_VALIDO = new Funcionario();
-        FUNCIONARIO_VALIDO.setNome("Isabelle");
-        FUNCIONARIO_VALIDO.setEmail("isa@exemplo.com");
-        FUNCIONARIO_VALIDO.setIdade(25);
-        FUNCIONARIO_VALIDO.setFuncao("Atendente");
-        FUNCIONARIO_VALIDO.setCpf("12345678901");
-        FUNCIONARIO_VALIDO.setSenha("senha123");
-        
-        ReflectionTestUtils.setField(FUNCIONARIO_VALIDO, "matricula", 1L);
-    }
 	
-
     @InjectMocks
-    private FuncionarioService funcionarioService;
+    private FuncionarioService service;
     
     @Mock
-    private FuncionarioRepository funcionarioRepository; // Mocka o Repository
+    private FuncionarioRepository repository; // Mocka o Repository
 
     // GET funcionarios
     @Test
     void deveRetornarTodosOsFuncionarios() {
-        when(funcionarioRepository.findAll()).thenReturn(Arrays.asList(FUNCIONARIO_VALIDO));
+        when(repository.findAll()).thenReturn(Arrays.asList(FuncionarioExemplos.FUNCIONARIO));
 
-        List<Funcionario> resultado = funcionarioService.getAllFuncionarios();
+        List<Funcionario> resultado = service.getAllFuncionarios();
 
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getNome()).isEqualTo("Isabelle");
         
-        verify(funcionarioRepository, times(1)).findAll();
+        verify(repository, times(1)).findAll();
     }
 
     // POST funcionario
     @Test
     void deveCriarFuncionarioComSucesso() {
-        when(funcionarioRepository.save(FUNCIONARIO_VALIDO)).thenReturn(FUNCIONARIO_VALIDO);
+        when(repository.save(Mockito.any(Funcionario.class)))
+                .thenReturn(FuncionarioExemplos.FUNCIONARIO);
 
-        Funcionario resultado = funcionarioService.createFuncionario(FUNCIONARIO_VALIDO);
+        // Chama o service com o DTO
+        Funcionario resultado = service.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
 
         assertThat(resultado).isNotNull();
         assertThat(resultado.getNome()).isEqualTo("Isabelle");
-        verify(funcionarioRepository, times(1)).save(FUNCIONARIO_VALIDO);
-    }
-    
-    // GET funcionario
 
+        // Verifica se o save foi chamado 1 vez
+        verify(repository, times(1)).save(Mockito.any(Funcionario.class));
+    }
+
+    // GET funcionario
     @Test
     void deveRetornarFuncionarioQuandoExistir() {
         long id = 1L;
 
-        when(funcionarioRepository.findById(id)).thenReturn(Optional.of(FUNCIONARIO_VALIDO));
+        when(repository.findById(id)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
 
-        Optional<Funcionario> resultado = funcionarioService.readFuncionario(id);
+        Optional<Funcionario> resultado = service.readFuncionario(id);
 
         assertThat(resultado).isPresent();
         assertThat(resultado.get().getNome()).isEqualTo("Isabelle");
@@ -85,10 +77,58 @@ public class FuncionarioServiceTest {
     @Test
     void deveRetornarVazioQuandoFuncionarioNaoExistir() {
         long id = 2L;
-        when(funcionarioRepository.findById(id)).thenReturn(Optional.empty());
+        when(repository.findById(id)).thenReturn(Optional.empty());
 
-        Optional<Funcionario> resultado = funcionarioService.readFuncionario(id);
+        Optional<Funcionario> resultado = service.readFuncionario(id);
 
         assertThat(resultado).isEmpty();
     }
+    
+    // PUT funcionario
+    
+    @Test
+    void deveAtualizarFuncionarioQuandoExistir() {
+        long id = 1L;
+
+        when(repository.findById(id)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
+        when(repository.save(any(Funcionario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Optional<Funcionario> resultado = service.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+
+        assertThat(resultado).isPresent();
+        assertThat(resultado.get().getNome()).isEqualTo("Isabelle");
+        assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
+        assertThat(resultado.get().getCpf()).isEqualTo("12345678901");
+
+        // Verifica se save foi chamado
+        verify(repository, times(1)).save(any(Funcionario.class));
+    }
+
+    @Test
+    void deveRetornarEmptyQuandoFuncionarioNaoExistir() {
+        long id = 2L;
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<Funcionario> resultado = service.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+
+        assertThat(resultado).isNotPresent();
+
+        // Save não deve ser chamado
+        verify(repository, never()).save(any(Funcionario.class));
+    }
+    
+    // DELETE funcionario
+    @Test
+    void deveDeletarFuncionarioQuandoExistir() {
+        Long id = 1L;
+
+        // Mocka findById para retornar o funcionário
+        when(repository.findById(id)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
+
+        service.deleteFuncionario(id);
+
+        verify(repository, times(1)).delete(FuncionarioExemplos.FUNCIONARIO);
+    }
+    	
 }
