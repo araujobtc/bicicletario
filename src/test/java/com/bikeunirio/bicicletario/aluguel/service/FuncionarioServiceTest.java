@@ -7,12 +7,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
 import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
@@ -29,6 +31,8 @@ public class FuncionarioServiceTest {
         FUNCIONARIO_VALIDO.setFuncao("Atendente");
         FUNCIONARIO_VALIDO.setCpf("12345678901");
         FUNCIONARIO_VALIDO.setSenha("senha123");
+        
+        ReflectionTestUtils.setField(FUNCIONARIO_VALIDO, "matricula", 1L);
     }
 	
 
@@ -61,5 +65,30 @@ public class FuncionarioServiceTest {
         assertThat(resultado).isNotNull();
         assertThat(resultado.getNome()).isEqualTo("Isabelle");
         verify(funcionarioRepository, times(1)).save(FUNCIONARIO_VALIDO);
+    }
+    
+    // GET funcionario
+
+    @Test
+    void deveRetornarFuncionarioQuandoExistir() {
+        long id = 1L;
+
+        when(funcionarioRepository.findById(id)).thenReturn(Optional.of(FUNCIONARIO_VALIDO));
+
+        Optional<Funcionario> resultado = funcionarioService.readFuncionario(id);
+
+        assertThat(resultado).isPresent();
+        assertThat(resultado.get().getNome()).isEqualTo("Isabelle");
+        assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
+    }
+
+    @Test
+    void deveRetornarVazioQuandoFuncionarioNaoExistir() {
+        long id = 2L;
+        when(funcionarioRepository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<Funcionario> resultado = funcionarioService.readFuncionario(id);
+
+        assertThat(resultado).isEmpty();
     }
 }

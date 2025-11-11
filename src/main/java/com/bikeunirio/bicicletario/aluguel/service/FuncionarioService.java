@@ -1,6 +1,7 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,10 @@ public class FuncionarioService {
 	
     public Funcionario createFuncionario(Funcionario funcionario) {
         return funcionarioRepository.save(funcionario);
+    }
+    
+    public Optional<Funcionario> readFuncionario(long id) {
+    	return funcionarioRepository.findById(id);
     }
 	
 }

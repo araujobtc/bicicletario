@@ -7,45 +7,51 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "passaportes")
 public class Passaporte {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String numero;
-	private LocalDate validade;
-	private String pais;
+    @NotBlank(message = "O número do passaporte é obrigatório")
+    private String numero;
 
-	public Long getId() {
-		return id;
-	}
+    @NotNull(message = "A data de validade é obrigatória")
+    private LocalDate validade;
 
-	public String getNumero() {
-		return numero;
-	}
+    @NotBlank(message = "O país é obrigatório")
+    private String pais;
 
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public LocalDate getValidade() {
-		return validade;
-	}
+    public String getNumero() {
+        return numero;
+    }
 
-	public void setValidade(LocalDate validade) {
-		this.validade = validade;
-	}
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
 
-	public String getPais() {
-		return pais;
-	}
+    public LocalDate getValidade() {
+        return validade;
+    }
 
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
+    public void setValidade(LocalDate validade) {
+        this.validade = validade;
+    }
 
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
 }

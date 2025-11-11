@@ -1,14 +1,14 @@
 package com.bikeunirio.bicicletario.aluguel.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,48 +25,41 @@ import jakarta.validation.Valid;
 @RequestMapping("/funcionario")
 public class FuncionarioController {
 
-    @Autowired
-    private FuncionarioService funcionarioService;
-    
-    @GetMapping
-    public ResponseEntity<List<Funcionario>> getAllFuncionarios() {
-        List<Funcionario> funcionarios = funcionarioService.getAllFuncionarios();
-        return ResponseEntity.ok(funcionarios);
-    }
+	@Autowired
+	private FuncionarioService funcionarioService;
 
-    @PostMapping
-    public ResponseEntity<Funcionario> createFuncionario(@Valid @RequestBody Funcionario funcionario) {
-        Funcionario novoFuncionario = funcionarioService.createFuncionario(funcionario);
-        return ResponseEntity.ok(novoFuncionario);
-    }
+	@GetMapping
+	public ResponseEntity<List<Funcionario>> getAllFuncionarios() {
+		List<Funcionario> funcionarios = funcionarioService.getAllFuncionarios();
+		return ResponseEntity.ok(funcionarios);
+	}
 
-    
-    @GetMapping("/{idFuncionario}")
-    public void readFuncionario() {
-    	
-    }
-    
-    @PutMapping("/{idFuncionario}")
-    public void updateFuncionario() {
-    	
-    }
-    
-    @DeleteMapping("/{idFuncionario}")
-    public void deleteFuncionario() {
-    	
-    }
-    
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ErroResposta>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(
-                    ex.getBindingResult()
-                      .getFieldErrors()
-                      .stream()
-                      .map(e -> new ErroResposta("DADOS_INVALIDOS", e.getDefaultMessage()))
-                      .toList()
-                );
-    }
+	@PostMapping
+	public ResponseEntity<Funcionario> createFuncionario(@Valid @RequestBody Funcionario funcionario) {
+		Funcionario novoFuncionario = funcionarioService.createFuncionario(funcionario);
+		return ResponseEntity.ok(novoFuncionario);
+	}
+
+	@GetMapping("/{idFuncionario}")
+	public ResponseEntity<?> readFuncionario(@PathVariable Long idFuncionario) {
+		Optional<Funcionario> funcionario = funcionarioService.readFuncionario(idFuncionario);
+
+		if (funcionario.isPresent()) {
+			return ResponseEntity.ok(funcionario.get()); // 200
+		} else {
+			ErroResposta erro = new ErroResposta("NAO_ENCONTRADO", "Funcionário não encontrado");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro); // 404
+		}
+	}
+
+	@PutMapping("/{idFuncionario}")
+	public void updateFuncionario() {
+
+	}
+
+	@DeleteMapping("/{idFuncionario}")
+	public void deleteFuncionario() {
+
+	}
 
 }

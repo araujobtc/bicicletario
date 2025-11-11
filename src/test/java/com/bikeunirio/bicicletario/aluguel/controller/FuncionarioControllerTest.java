@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
+import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.service.FuncionarioService;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +46,7 @@ public class FuncionarioControllerTest {
 
 	// GET funcionarios
 	@Test
-	void Status200RetornarListaDeFuncionarios() {
+	void status200RetornarListaDeFuncionarios() {
 		List<Funcionario> funcionarios = Arrays.asList(FUNCIONARIO_VALIDO);
 
 		when(service.getAllFuncionarios()).thenReturn(funcionarios);
@@ -57,7 +60,7 @@ public class FuncionarioControllerTest {
 
 	// POST funcionario
 	@Test
-	void deveCriarFuncionarioComSucesso() {
+	void status200CriarFuncionario() {
 		when(service.createFuncionario(FUNCIONARIO_VALIDO)).thenReturn(FUNCIONARIO_VALIDO);
 
 		ResponseEntity<Funcionario> resposta = controller.createFuncionario(FUNCIONARIO_VALIDO);
@@ -67,8 +70,8 @@ public class FuncionarioControllerTest {
 	}
 
 	@Test
-	void deveRetornar422QuandoDadosInvalidos() {
-		// Arrange: cria um funcionário inválido com todos os campos obrigatórios ausentes
+	void status422CriarFuncionarioDadosInvalidos() {
+		// cria um funcionário inválido com todos os campos obrigatórios ausentes
 		Funcionario funcionarioInvalido = new Funcionario();
 
 		// Cria o BeanPropertyBindingResult para armazenar os erros de validação
@@ -83,7 +86,7 @@ public class FuncionarioControllerTest {
 		when(ex.getBindingResult()).thenReturn(bindingResult);
 
 		// chama o handler que converte os erros em ResponseEntity
-		ResponseEntity<List<ErroResposta>> resposta = controller.handleValidationExceptions(ex);
+		ResponseEntity<List<ErroResposta>> resposta = GlobalExceptionHandler.handleValidationExceptions(ex);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 		assertThat(resposta.getBody()).isNotNull();
@@ -91,5 +94,51 @@ public class FuncionarioControllerTest {
 		assertThat(resposta.getBody().get(0).getMensagem()).isEqualTo("O nome é obrigatório");
 		assertThat(resposta.getBody().get(1).getMensagem()).isEqualTo("O e-mail é obrigatório");
 	}
+	
+	/* GET funcionario */
+	
+	@Test
+    void status200RetornarFuncionario() {
+        when(service.readFuncionario(1L)).thenReturn(Optional.of(FUNCIONARIO_VALIDO));
+
+        ResponseEntity<?> resposta = controller.readFuncionario(1L);
+
+        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
+        Funcionario f = (Funcionario) resposta.getBody();
+        assertThat(f.getNome()).isEqualTo("Isabelle");
+    }
+
+    @Test
+    void status404RetornarFuncionarioNaoExiste() {
+        when(service.readFuncionario(2L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> resposta = controller.readFuncionario(2L);
+
+        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+        ErroResposta erro = (ErroResposta) resposta.getBody();
+        assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
+        assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+    }
+
+    /*
+     * No swagger é solicitado retorno de erro 422 para dados inválidos
+     */
+    @Test
+    void status422RetornarFuncionarioParametroInvalido() {
+        // Simula exceção lançada pelo Spring quando o id não é um número válido
+        MethodArgumentTypeMismatchException ex = 
+            new MethodArgumentTypeMismatchException("abc", Long.class, "idFuncionario", null, null);
+
+        // Chama o handler diretamente
+        ResponseEntity<ErroResposta> resposta = GlobalExceptionHandler.handleTypeMismatch(ex);
+
+        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+        assertThat(resposta.getBody().getCodigo()).isEqualTo("DADOS_INVALIDOS");
+        assertThat(resposta.getBody().getMensagem())
+            .contains("O valor do parâmetro 'idFuncionario' é inválido.");
+    }
 
 }

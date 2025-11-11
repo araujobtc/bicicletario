@@ -9,67 +9,80 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "cartoes")
 public class Cartao {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String nomeTitular;
-	private String numero;
-	private LocalDate validade;
-	private String cvv;
+    @NotBlank(message = "O nome do titular é obrigatório")
+    private String nomeTitular;
 
-	@OneToOne
-	@JoinColumn(name = "ciclista_id")
-	// Cria FK na tabela cartoes apontando para ciclistas
-	private Ciclista ciclista;
+    @NotBlank(message = "O número do cartão é obrigatório")
+    @Pattern(regexp = "\\d{16}", message = "O número do cartão deve conter 16 dígitos")
+    private String numero;
 
-	public Long getId() {
-		return id;
-	}
+    @NotNull(message = "A data de validade é obrigatória")
+    @Future(message = "A data de validade deve ser posterior a data atual")
+    private LocalDate validade;
 
-	public String getNomeTitular() {
-		return nomeTitular;
-	}
+    @NotBlank(message = "O código de segurança (CVV) é obrigatório")
+    @Pattern(regexp = "\\d{3,4}", message = "O CVV deve conter 3 ou 4 dígitos")
+    private String cvv;
 
-	public void setNomeTitular(String nomeTitular) {
-		this.nomeTitular = nomeTitular;
-	}
+    @OneToOne
+    @JoinColumn(name = "ciclista_id", nullable = false)
+    @NotNull(message = "O ciclista associado é obrigatório")
+    private Ciclista ciclista;
 
-	public String getNumero() {
-		return numero;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
+    public String getNomeTitular() {
+        return nomeTitular;
+    }
 
-	public LocalDate getValidade() {
-		return validade;
-	}
+    public void setNomeTitular(String nomeTitular) {
+        this.nomeTitular = nomeTitular;
+    }
 
-	public void setValidade(LocalDate validade) {
-		this.validade = validade;
-	}
+    public String getNumero() {
+        return numero;
+    }
 
-	public String getCvv() {
-		return cvv;
-	}
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
 
-	public void setCvv(String cvv) {
-		this.cvv = cvv;
-	}
+    public LocalDate getValidade() {
+        return validade;
+    }
 
-	public Ciclista getCiclista() {
-		return ciclista;
-	}
+    public void setValidade(LocalDate validade) {
+        this.validade = validade;
+    }
 
-	public void setCiclista(Ciclista ciclista) {
-		this.ciclista = ciclista;
-	}
+    public String getCvv() {
+        return cvv;
+    }
 
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
+
+    public Ciclista getCiclista() {
+        return ciclista;
+    }
+
+    public void setCiclista(Ciclista ciclista) {
+        this.ciclista = ciclista;
+    }
 }
