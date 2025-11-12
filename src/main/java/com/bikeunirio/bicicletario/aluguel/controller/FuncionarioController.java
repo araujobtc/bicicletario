@@ -40,11 +40,11 @@ public class FuncionarioController {
 
 	    // Valida se senha e confirmação são iguais
 	    if (!funcionarioDTO.getSenha().equals(funcionarioDTO.getConfirmacaoSenha())) {
-			return GlobalExceptionHandler.notFound("Senha e confirmação de senha não coincidem");
+			return GlobalExceptionHandler.unprocessableEntity("Senha e confirmação de senha não coincidem");
 	    }
-	    Funcionario novoFuncionario = funcionarioService.createFuncionario(funcionarioDTO);
+	    Funcionario funcionario = funcionarioService.createFuncionario(funcionarioDTO);
 
-	    return ResponseEntity.ok(novoFuncionario); // 200
+	    return ResponseEntity.ok(funcionario); // 200
 	}
 
 

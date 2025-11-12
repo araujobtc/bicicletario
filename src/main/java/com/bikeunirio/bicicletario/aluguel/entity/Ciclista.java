@@ -10,13 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "ciclistas")
@@ -26,37 +19,18 @@ public class Ciclista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome é obrigatório")
-    @Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")
     private String nome;
-
-    @NotNull(message = "A data de nascimento é obrigatória")
-    @Past(message = "A data de nascimento deve ser no passado")
     private LocalDate nascimento;
-
-    @NotBlank(message = "O CPF é obrigatório")
-    @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
     private String cpf;
-
-    @NotBlank(message = "A nacionalidade é obrigatória")
     private String nacionalidade;
-
-    @NotBlank(message = "O e-mail é obrigatório")
-    @Email(message = "E-mail inválido")
     private String email;
-
-    @NotBlank(message = "A URL da foto do documento é obrigatória")
     private String urlFotoDocumento;
-
-    @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
-    @Valid
     @OneToOne(cascade = CascadeType.ALL) 
     @JoinColumn(name = "passaporte_id") 
     private Passaporte passaporte;
 
-    @Valid
     @OneToOne(mappedBy = "ciclista", cascade = CascadeType.ALL)
     private Cartao cartao;
 

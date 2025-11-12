@@ -1,0 +1,117 @@
+package com.bikeunirio.bicicletario.aluguel.dto;
+
+import java.time.LocalDate;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+
+public class CiclistaDTO {
+
+	@NotBlank(message = "O nome é obrigatório")
+	private String nome;
+
+    @NotNull(message = "A data de nascimento é obrigatória")
+    @Past(message = "A data de nascimento deve ser no passado")
+	private LocalDate nascimento;
+
+    @NotBlank(message = "O CPF é obrigatório")
+    @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
+	private String cpf;
+
+    @NotBlank(message = "A nacionalidade é obrigatória")
+	private String nacionalidade;
+
+	@Email(message = "E-mail inválido")
+	@NotBlank(message = "O e-mail é obrigatório")
+	private String email;
+
+    @NotBlank(message = "A URL da foto do documento é obrigatória")
+	private String urlFotoDocumento;
+
+	@NotBlank(message = "A senha é obrigatória")
+	private String senha;
+
+	@Valid
+	@NotNull(message = "Os dados do passaporte são obrigatórios")
+	private PassaporteDTO passaporte;
+
+	@Valid
+	@NotNull(message = "Os dados do meio de pagamento são obrigatórios")
+	private MeioDePagamentoDTO meioDePagamento;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public LocalDate getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(LocalDate nascimento) {
+		this.nascimento = nascimento;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getNacionalidade() {
+		return nacionalidade;
+	}
+
+	public void setNacionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getUrlFotoDocumento() {
+		return urlFotoDocumento;
+	}
+
+	public void setUrlFotoDocumento(String urlFotoDocumento) {
+	    this.urlFotoDocumento = urlFotoDocumento;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public PassaporteDTO getPassaporte() {
+		return passaporte;
+	}
+
+	public void setPassaporte(PassaporteDTO passaporte) {
+		this.passaporte = passaporte;
+	}
+
+	public MeioDePagamentoDTO getMeioDePagamento() {
+		return meioDePagamento;
+	}
+
+	public void setMeioDePagamento(MeioDePagamentoDTO meioDePagamento) {
+		this.meioDePagamento = meioDePagamento;
+	}
+}

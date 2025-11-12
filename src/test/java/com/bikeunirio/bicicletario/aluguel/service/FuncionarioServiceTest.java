@@ -47,8 +47,8 @@ public class FuncionarioServiceTest {
     // POST funcionario
     @Test
     void deveCriarFuncionarioComSucesso() {
-        when(repository.save(Mockito.any(Funcionario.class)))
-                .thenReturn(FuncionarioExemplos.FUNCIONARIO);
+    	// Quando esse método for chamado vai devolver o mesmo objeto que foi passado como argumento
+        when(repository.save(any(Funcionario.class))).thenAnswer(params -> params.getArgument(0));
 
         // Chama o service com o DTO
         Funcionario resultado = service.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
@@ -85,7 +85,6 @@ public class FuncionarioServiceTest {
     }
     
     // PUT funcionario
-    
     @Test
     void deveAtualizarFuncionarioQuandoExistir() {
         long id = 1L;
