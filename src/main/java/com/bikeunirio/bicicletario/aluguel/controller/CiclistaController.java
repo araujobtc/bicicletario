@@ -47,9 +47,15 @@ public class CiclistaController {
     }
     
     @PutMapping("/{idCiclista}")
-    public void updateCiclista() {
-    	
-    }
+    public ResponseEntity<?> updateCiclista(@PathVariable Long idCiclista, @RequestBody @Valid CiclistaDTO ciclistaDTO) {
+		Optional<Ciclista> atualizado = ciclistaService.updateCiclista(idCiclista, ciclistaDTO);
+
+		if (atualizado.isPresent()) {
+			return ResponseEntity.ok(atualizado.get()); // 200
+		} else {
+			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+		}
+	}
     
     @PostMapping("/{idCiclista}/ativar")
     public void ativar() {

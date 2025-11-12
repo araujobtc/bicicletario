@@ -45,5 +45,11 @@ public class CiclistaService {
 	public Optional<Ciclista> readCiclista(long id) {
 		return ciclistaRepository.findById(id);
 	}
-	
+
+	public Optional<Ciclista> updateCiclista(long id, CiclistaDTO ciclistaDTO) {
+		return ciclistaRepository.findById(id).map(ciclista -> {
+			BeanUtils.copyProperties(ciclistaDTO, ciclista, "id", "matricula");
+			return ciclistaRepository.save(ciclista);
+		});
+	}
 }

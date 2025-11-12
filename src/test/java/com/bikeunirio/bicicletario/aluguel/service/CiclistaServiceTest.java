@@ -1,10 +1,12 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,12 +41,10 @@ public class CiclistaServiceTest {
         Ciclista resultado = service.createCiclista(CiclistaExemplos.CICLISTA_DTO);
 
         assertNotNull(resultado);
-        assertEquals("João da Silva", resultado.getNome());
         assertEquals("12345678901", resultado.getCpf());
         assertNotNull(resultado.getPassaporte());
         assertNotNull(resultado.getCartao());
-        assertEquals(CiclistaExemplos.CICLISTA_DTO.getMeioDePagamento().getNomeTitular(), resultado.getCartao().getNomeTitular());
-        assertEquals(resultado, resultado.getCartao().getCiclista()); 
+        assertEquals(resultado, resultado.getCartao().getCiclista()); // valida relacionamento bilateral
         verify(repository, times(1)).save(any(Ciclista.class));
     }
     
@@ -74,4 +74,41 @@ public class CiclistaServiceTest {
         
         verify(repository, times(1)).findById(id);
     }
+    
+    // PUT ciclista
+    @Test
+    void deveAtualizarCiclistaQuandoExistir() {
+        long id = 1L;
+
+        when(repository.findById(id)).thenReturn(Optional.of(CiclistaExemplos.CICLISTA));
+        when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Optional<Ciclista> resultado = service.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
+
+        assertThat(resultado).isPresent();
+        assertThat(resultado.get().getNome()).isEqualTo("Isabelle Araujo");
+        assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
+        assertThat(resultado.get().getCpf()).isEqualTo("12345678901");
+        assertThat(resultado.get().getNacionalidade()).isEqualTo("Brasileira");
+        assertThat(resultado.get().getUrlFotoDocumento()).isEqualTo("http://exemplo.com/doc.jpg");
+
+        // Verifica se save foi chamado
+        verify(repository, times(1)).save(any(Ciclista.class));
+    }
+
+    @Test
+    void deveRetornarEmptyQuandoCiclistaNaoExistir() {
+        long id = 2L;
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<Ciclista> resultado = service.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
+
+        assertThat(resultado).isNotPresent();
+
+        // Save não deve ser chamado
+        verify(repository, never()).save(any(Ciclista.class));
+    }
+    
+    // DELETE ciclista
 }

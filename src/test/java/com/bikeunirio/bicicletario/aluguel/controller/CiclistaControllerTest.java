@@ -1,8 +1,10 @@
 package com.bikeunirio.bicicletario.aluguel.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
+import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
@@ -35,10 +38,8 @@ public class CiclistaControllerTest {
     @Test
     void deveRetornarStatus201ECorpoCiclistaAoCadastrarComSucesso() {
         
-        Ciclista ciclistaSalvo = new Ciclista();
-        ciclistaSalvo.setNome(CiclistaExemplos.CICLISTA_DTO.getNome()); 
         
-        when(service.createCiclista(any(CiclistaDTO.class))).thenReturn(ciclistaSalvo);
+        when(service.createCiclista(any(CiclistaDTO.class))).thenReturn(CiclistaExemplos.CICLISTA);
 
         ResponseEntity<Ciclista> response = controller.createCiclista(CiclistaExemplos.CICLISTA_DTO);
 
@@ -46,7 +47,7 @@ public class CiclistaControllerTest {
                      "O status HTTP deve ser 201 CREATED para criação de recurso.");
         
         assertNotNull(response.getBody(), "O corpo da resposta não deve ser nulo.");
-        assertEquals(ciclistaSalvo, response.getBody(), 
+        assertEquals(CiclistaExemplos.CICLISTA, response.getBody(), 
                      "O corpo da resposta deve ser a entidade Ciclista retornada pelo Service.");
         
         verify(service, times(1)).createCiclista(any(CiclistaDTO.class));
@@ -67,4 +68,42 @@ public class CiclistaControllerTest {
         verify(service).readCiclista(id);
     }
     
+    // PUT ciclista
+    @Test
+    void status200AtualizarCiclista() {
+        long id = 1L;
+
+        when(service.updateCiclista(eq(id), any(CiclistaDTO.class)))
+                .thenReturn(Optional.of(CiclistaExemplos.CICLISTA));
+
+        ResponseEntity<?> resposta = controller.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
+
+        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(resposta.getBody()).isInstanceOf(Ciclista.class);
+
+        Ciclista f = (Ciclista) resposta.getBody();
+        assertThat(f.getNome()).isEqualTo("Isabelle Araujo");
+        assertThat(f.getEmail()).isEqualTo("isa@exemplo.com");
+
+        verify(service, times(1)).updateCiclista(eq(id), any(CiclistaDTO.class));
+    }
+    
+    @Test
+    void status404AtualizarCiclistaNaoExiste() {
+        long id = 2L;
+
+        when(service.updateCiclista(eq(id), any(CiclistaDTO.class)))
+                .thenReturn(Optional.empty());
+
+        ResponseEntity<?> resposta = controller.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
+
+        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+
+        ErroResposta erro = (ErroResposta) resposta.getBody();
+        assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
+        assertThat(erro.getMensagem()).isEqualTo("Ciclista não encontrado");
+    }
+    
+    // DELETE ciclista
 }
