@@ -28,6 +28,14 @@ public class FuncionarioController {
 
 	@Autowired
 	private FuncionarioService funcionarioService;
+	
+	// UC15
+	
+	// Todos os dados do formulário são obrigatórios.
+	// matricula - A informação não pode ser editada e é gerada automaticamente na inclusão.
+	// add enum para função - A função do funcionário pode ser administrativo ou reparador.
+	// remover setCPF do funcionario
+	// delete - A2.3 O sistema exclui o registro.
 
 	@GetMapping
 	public ResponseEntity<List<Funcionario>> getAllFuncionarios() {

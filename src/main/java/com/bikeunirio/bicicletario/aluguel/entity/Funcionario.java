@@ -25,7 +25,7 @@ public class Funcionario {
 	private String senha;
 
 	public Long getId() {
-		return matricula;
+		return id;
 	}
 	
 	public Long getMatricula() {

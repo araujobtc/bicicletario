@@ -105,5 +105,4 @@ public class CiclistaControllerTest {
         assertThat(erro.getMensagem()).isEqualTo("Ciclista não encontrado");
     }
     
-    // DELETE ciclista
 }

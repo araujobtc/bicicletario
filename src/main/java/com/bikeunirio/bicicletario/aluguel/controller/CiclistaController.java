@@ -24,18 +24,19 @@ import jakarta.validation.Valid;
 @RequestMapping("/ciclista")
 public class CiclistaController {
 
-    @Autowired
-    private CiclistaService ciclistaService;
-    
-    @PostMapping
-    public ResponseEntity<Ciclista> createCiclista(@Valid @RequestBody CiclistaDTO ciclistaDTO) {
-        Ciclista ciclista = ciclistaService.createCiclista(ciclistaDTO);
-        
-        return new ResponseEntity<>(ciclista, HttpStatus.CREATED);
-    }
-    
-    @GetMapping("/{idCiclista}")
-    public ResponseEntity<?> readCiclista(@PathVariable Long idCiclista) {
+	@Autowired
+	private CiclistaService ciclistaService;
+
+	// UC01 e UC02
+	@PostMapping
+	public ResponseEntity<Ciclista> createCiclista(@Valid @RequestBody CiclistaDTO ciclistaDTO) {
+		Ciclista ciclista = ciclistaService.createCiclista(ciclistaDTO);
+
+		return new ResponseEntity<>(ciclista, HttpStatus.CREATED);
+	}
+
+	@GetMapping("/{idCiclista}")
+	public ResponseEntity<?> readCiclista(@PathVariable Long idCiclista) {
 		Optional<Ciclista> ciclista = ciclistaService.readCiclista(idCiclista);
 
 		if (ciclista.isPresent()) {
@@ -43,11 +44,17 @@ public class CiclistaController {
 		} else {
 			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
 		}
-    	
-    }
-    
-    @PutMapping("/{idCiclista}")
-    public ResponseEntity<?> updateCiclista(@PathVariable Long idCiclista, @RequestBody @Valid CiclistaDTO ciclistaDTO) {
+
+	}
+
+	// UC06 e UC07
+	// nao é obrigatorio fornecer todos os dados Fluxo alternativo A1
+	// edição do cartao separada - validacao do cartao
+	// falta email
+	//
+	@PutMapping("/{idCiclista}")
+	public ResponseEntity<?> updateCiclista(@PathVariable Long idCiclista,
+			@RequestBody @Valid CiclistaDTO ciclistaDTO) {
 		Optional<Ciclista> atualizado = ciclistaService.updateCiclista(idCiclista, ciclistaDTO);
 
 		if (atualizado.isPresent()) {
@@ -56,24 +63,24 @@ public class CiclistaController {
 			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
 		}
 	}
-    
-    @PostMapping("/{idCiclista}/ativar")
-    public void ativar() {
-    	
-    }
-    
-    @GetMapping("/{idCiclista}/permiteAluguel}")
-    public void ciclistaTemPermissao() {
-    	
-    }
-    
-    @GetMapping("/{idCiclista}")
-    public void getBicicletaAlugada() {
-    	
-    }
-    
-    @GetMapping("/existeEmail/{email}")
-    public void isEmailCadastrado() {
-    	
-    }
+
+	@PostMapping("/{idCiclista}/ativar")
+	public void ativar() {
+
+	}
+
+	@GetMapping("/{idCiclista}/permiteAluguel}")
+	public void ciclistaTemPermissao() {
+
+	}
+
+	@GetMapping("/{idCiclista}")
+	public void getBicicletaAlugada() {
+
+	}
+
+	@GetMapping("/existeEmail/{email}")
+	public void isEmailCadastrado() {
+
+	}
 }

@@ -110,5 +110,4 @@ public class CiclistaServiceTest {
         verify(repository, never()).save(any(Ciclista.class));
     }
     
-    // DELETE ciclista
 }
