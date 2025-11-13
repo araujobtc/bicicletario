@@ -2,12 +2,8 @@ package com.bikeunirio.bicicletario.aluguel.entity;
 
 import java.time.LocalDate;
 
-import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,10 +22,7 @@ public class Ciclista {
     private String nome;
     private LocalDate nascimento;
     private String cpf;
-    
-    @Enumerated(EnumType.STRING)
-	private Nacionalidades nacionalidade;
-    
+	private String nacionalidade;
     private String email;
     private String urlFotoDocumento;
     private String senha;
@@ -69,11 +62,11 @@ public class Ciclista {
 		this.cpf = cpf;
 	}
 
-    public Nacionalidades getNacionalidade() {
+    public String getNacionalidade() {
         return nacionalidade;
     }
 
-    public void setNacionalidade(Nacionalidades nacionalidade) {
+    public void setNacionalidade(String nacionalidade) {
         this.nacionalidade = nacionalidade;
     }
 

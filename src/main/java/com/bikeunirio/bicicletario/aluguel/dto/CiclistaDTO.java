@@ -2,11 +2,7 @@ package com.bikeunirio.bicicletario.aluguel.dto;
 
 import java.time.LocalDate;
 
-import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
-
 import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -29,9 +25,8 @@ public class CiclistaDTO {
 	private String cpf;
 
 	@NotBlank(message = "A nacionalidade é obrigatória")
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-	private Nacionalidades nacionalidade;
+	private String nacionalidade;
 
 	@Email(message = "E-mail inválido")
 	@NotBlank(message = "O e-mail é obrigatório")

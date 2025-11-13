@@ -1,10 +1,6 @@
 package com.bikeunirio.bicicletario.aluguel.entity;
 
-import com.bikeunirio.bicicletario.aluguel.enums.FuncoesFuncionario;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,8 +19,7 @@ public class Funcionario {
 	private Long matricula;
 	private String nome;
 	private Integer idade;
-	@Enumerated(EnumType.STRING)
-	private FuncoesFuncionario funcao;
+	private String funcao;
 	private String cpf;
 	private String email;
 	private String senha;
@@ -57,11 +52,11 @@ public class Funcionario {
 		this.idade = idade;
 	}
 
-	public FuncoesFuncionario getFuncao() {
+	public String getFuncao() {
 		return funcao;
 	}
 
-	public void setFuncao(FuncoesFuncionario funcao) {
+	public void setFuncao(String funcao) {
 		this.funcao = funcao;
 	}
 
