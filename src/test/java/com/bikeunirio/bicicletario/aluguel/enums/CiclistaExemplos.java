@@ -50,7 +50,7 @@ public class CiclistaExemplos {
         CICLISTA.setNome("Isabelle Araujo");
         CICLISTA.setNascimento(LocalDate.of(2000, 1, 1));
         CICLISTA.setCpf("12345678901");
-        CICLISTA.setNacionalidade(Nacionalidades.BRASILEIRO);
+        CICLISTA.setNacionalidade(Nacionalidades.BRASILEIRO.getValor());
         CICLISTA.setEmail("isa@exemplo.com");
         CICLISTA.setUrlFotoDocumento("http://exemplo.com/doc.jpg");
         CICLISTA.setSenha("senha123");
@@ -63,7 +63,7 @@ public class CiclistaExemplos {
         CICLISTA_DTO.setNome("Isabelle Araujo");
         CICLISTA_DTO.setNascimento(LocalDate.of(2000, 1, 1));
         CICLISTA_DTO.setCpf("12345678901");
-        CICLISTA_DTO.setNacionalidade(Nacionalidades.BRASILEIRO);
+        CICLISTA_DTO.setNacionalidade(Nacionalidades.BRASILEIRO.getValor());
         CICLISTA_DTO.setEmail("isa@exemplo.com");
         CICLISTA_DTO.setUrlFotoDocumento("http://exemplo.com/doc.jpg");
         CICLISTA_DTO.setSenha("senha123");
