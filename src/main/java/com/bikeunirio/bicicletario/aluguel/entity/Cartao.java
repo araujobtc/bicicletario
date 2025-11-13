@@ -25,7 +25,7 @@ public class Cartao {
 	private String cvv;
 
 	@OneToOne
-	@JoinColumn(name = "ciclista_id", nullable = false)
+	@JoinColumn(name = "id_ciclista", nullable = false)
 	@NotNull(message = "O ciclista associado é obrigatório")
 	private Ciclista ciclista;
 

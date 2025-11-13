@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
 
+
 @RestController
 @RequestMapping("/")
 public class AluguelController {
@@ -39,17 +40,17 @@ public class AluguelController {
     // UC03
 	@PostMapping("/aluguel")
 	public void alugarBicicleta() {
-		
+		//
 	}
 
 	// UC04 e UC16
 	@PostMapping("/devolucao")
 	public void devolverBicicleta() {
-		
+		//
 	}
 	// mater apenas se apagar dados somente relacionado a aluguel
 	@PostMapping("/restaurarBanco")
 	public void restaurarBD() {
-		
+		//
 	}
 }

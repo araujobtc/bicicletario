@@ -5,18 +5,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "funcionarios")
+// Garante que o banco de dados não permitirá matrículas duplicadas
+@Table(name = "funcionarios", uniqueConstraints = @UniqueConstraint(columnNames = "matricula"))
 public class Funcionario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@GeneratedValue
-	private Long matricula;
 
+	private Long matricula;
 	private String nome;
 	private Integer idade;
 	private String funcao;
@@ -27,9 +27,13 @@ public class Funcionario {
 	public Long getId() {
 		return id;
 	}
-	
+
 	public Long getMatricula() {
 		return matricula;
+	}
+
+	public void setMatricula(Long matricula) {
+		this.matricula = matricula;
 	}
 
 	public String getNome() {

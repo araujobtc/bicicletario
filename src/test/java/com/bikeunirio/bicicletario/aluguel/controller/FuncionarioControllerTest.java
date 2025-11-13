@@ -55,23 +55,21 @@ public class FuncionarioControllerTest {
 		assertThat(resposta.getBody().get(0).getNome()).isEqualTo("Isabelle");
 	}
 
-	// POST funcionario@Test
+	// POST funcionario
 	@Test
 	void status200CriarFuncionario() {
-	    // Mocka o service para retornar o funcionário criado
-	    when(service.createFuncionario(Mockito.any(FuncionarioDTO.class)))
-	            .thenReturn(FuncionarioExemplos.FUNCIONARIO);
+		// Mocka o service para retornar o funcionário criado
+		when(service.createFuncionario(Mockito.any(FuncionarioDTO.class))).thenReturn(FuncionarioExemplos.FUNCIONARIO);
+		// Chama o controller com o DTO válido
+		ResponseEntity<?> resposta = controller.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
 
-	    // Chama o controller com o DTO válido
-	    ResponseEntity<?> resposta = controller.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-	    assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-	    // Verifica que o corpo da resposta é um Funcionario e tem os valores corretos
-	    assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
-	    Funcionario f = (Funcionario) resposta.getBody();
-	    assertThat(f.getNome()).isEqualTo("Isabelle");
-	    assertThat(f.getEmail()).isEqualTo("isa@exemplo.com");
+		// Verifica que o corpo da resposta é um Funcionario e tem os valores corretos
+		assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
+		Funcionario f = (Funcionario) resposta.getBody();
+		assertThat(f.getNome()).isEqualTo("Isabelle");
+		assertThat(f.getEmail()).isEqualTo("isa@exemplo.com");
 	}
 
 	@Test
@@ -86,7 +84,8 @@ public class FuncionarioControllerTest {
 		bindingResult.addError(new FieldError("funcionario", "nome", "O nome é obrigatório"));
 		bindingResult.addError(new FieldError("funcionario", "email", "O e-mail é obrigatório"));
 
-		// Mocka a exceção que normalmente seria lançada pelo Spring ao validar o @RequestBody
+		// Mocka a exceção que normalmente seria lançada pelo Spring ao validar o
+		// @RequestBody
 		MethodArgumentNotValidException ex = org.mockito.Mockito.mock(MethodArgumentNotValidException.class);
 		when(ex.getBindingResult()).thenReturn(bindingResult);
 
@@ -99,149 +98,147 @@ public class FuncionarioControllerTest {
 		assertThat(resposta.getBody().get(0).getMensagem()).isEqualTo("O nome é obrigatório");
 		assertThat(resposta.getBody().get(1).getMensagem()).isEqualTo("O e-mail é obrigatório");
 	}
-	
+
 	/* GET funcionario */
 	@Test
-    void status200RetornarFuncionario() {
-        when(service.readFuncionario(1L)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
+	void status200RetornarFuncionario() {
+		when(service.readFuncionario(1L)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
 
-        ResponseEntity<?> resposta = controller.readFuncionario(1L);
+		ResponseEntity<?> resposta = controller.readFuncionario(1L);
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
-        Funcionario f = (Funcionario) resposta.getBody();
-        assertThat(f.getNome()).isEqualTo("Isabelle");
-    }
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
+		Funcionario f = (Funcionario) resposta.getBody();
+		assertThat(f.getNome()).isEqualTo("Isabelle");
+	}
 
-    @Test
-    void status404RetornarFuncionarioNaoExiste() {
-        when(service.readFuncionario(2L)).thenReturn(Optional.empty());
+	@Test
+	void status404RetornarFuncionarioNaoExiste() {
+		when(service.readFuncionario(2L)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> resposta = controller.readFuncionario(2L);
+		ResponseEntity<?> resposta = controller.readFuncionario(2L);
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
-        ErroResposta erro = (ErroResposta) resposta.getBody();
-        assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
-        assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
-    }
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+		ErroResposta erro = (ErroResposta) resposta.getBody();
+		assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
+		assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+	}
 
-    /*
-     * No swagger é solicitado retorno de erro 422 para dados inválidos
-     */
-    @Test
-    void status422RetornarFuncionarioParametroInvalido() {
-        // Simula exceção lançada pelo Spring quando o id não é um número válido
-        MethodArgumentTypeMismatchException ex = 
-            new MethodArgumentTypeMismatchException("abc", Long.class, "idFuncionario", null, null);
+	/*
+	 * No swagger é solicitado retorno de erro 422 para dados inválidos
+	 */
+	@Test
+	void status422RetornarFuncionarioParametroInvalido() {
+		// Simula exceção lançada pelo Spring quando o id não é um número válido
+		MethodArgumentTypeMismatchException ex = new MethodArgumentTypeMismatchException("abc", Long.class,
+				"idFuncionario", null, null);
 
-        // Chama o handler diretamente
-        ResponseEntity<ErroResposta> resposta = new GlobalExceptionHandler().handleTypeMismatch(ex);
+		// Chama o handler diretamente
+		ResponseEntity<ErroResposta> resposta = new GlobalExceptionHandler().handleTypeMismatch(ex);
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
-        assertThat(resposta.getBody().getCodigo()).isEqualTo("DADOS_INVALIDOS");
-        assertThat(resposta.getBody().getMensagem())
-            .contains("O valor do parâmetro 'idFuncionario' é inválido.");
-    }
-    
-    // PUT funcionario
-    @Test
-    void status200AtualizarFuncionario() {
-        long id = 1L;
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+		assertThat(resposta.getBody().getCodigo()).isEqualTo("DADOS_INVALIDOS");
+		assertThat(resposta.getBody().getMensagem()).contains("O valor do parâmetro 'idFuncionario' é inválido.");
+	}
 
-        when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class)))
-                .thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
+	// PUT funcionario
+	@Test
+	void status200AtualizarFuncionario() {
+		long id = 1L;
 
-        ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+		when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class)))
+				.thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
+		ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
 
-        Funcionario f = (Funcionario) resposta.getBody();
-        assertThat(f.getNome()).isEqualTo("Isabelle");
-        assertThat(f.getEmail()).isEqualTo("isa@exemplo.com");
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
 
-        verify(service, times(1)).updateFuncionario(eq(id), any(FuncionarioDTO.class));
-    }
+		Funcionario f = (Funcionario) resposta.getBody();
+		assertThat(f.getNome()).isEqualTo("Isabelle");
+		assertThat(f.getEmail()).isEqualTo("isa@exemplo.com");
 
-    @Test
-    void status404AtualizarFuncionarioNaoExiste() {
-        long id = 2L;
+		verify(service, times(1)).updateFuncionario(eq(id), any(FuncionarioDTO.class));
+	}
 
-        when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class)))
-                .thenReturn(Optional.empty());
+	@Test
+	void status404AtualizarFuncionarioNaoExiste() {
+		long id = 2L;
 
-        ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+		when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class))).thenReturn(Optional.empty());
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+		ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
 
-        ErroResposta erro = (ErroResposta) resposta.getBody();
-        assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
-        assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
-    }
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
 
-    @Test
-    void status422AtualizarFuncionarioSenhaDiferenteDaConfirmacao() {
-        long id = 1L;
+		ErroResposta erro = (ErroResposta) resposta.getBody();
+		assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
+		assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+	}
 
-        FuncionarioDTO dtoComSenhaErrada = new FuncionarioDTO();
-        dtoComSenhaErrada.setNome("Isabelle");
-        dtoComSenhaErrada.setEmail("isa@exemplo.com");
-        dtoComSenhaErrada.setIdade(25);
-        dtoComSenhaErrada.setFuncao("Atendente");
-        dtoComSenhaErrada.setCpf("12345678901");
-        dtoComSenhaErrada.setSenha("senha123");
-        dtoComSenhaErrada.setConfirmacaoSenha("outrasenha");
+	@Test
+	void status422AtualizarFuncionarioSenhaDiferenteDaConfirmacao() {
+		long id = 1L;
 
-        ResponseEntity<?> resposta = controller.updateFuncionario(id, dtoComSenhaErrada);
+		FuncionarioDTO dtoComSenhaErrada = new FuncionarioDTO();
+		dtoComSenhaErrada.setNome("Isabelle");
+		dtoComSenhaErrada.setEmail("isa@exemplo.com");
+		dtoComSenhaErrada.setIdade(25);
+		dtoComSenhaErrada.setFuncao("Atendente");
+		dtoComSenhaErrada.setCpf("12345678901");
+		dtoComSenhaErrada.setSenha("senha123");
+		dtoComSenhaErrada.setConfirmacaoSenha("outrasenha");
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+		ResponseEntity<?> resposta = controller.updateFuncionario(id, dtoComSenhaErrada);
 
-        ErroResposta erro = (ErroResposta) resposta.getBody();
-        assertThat(erro.getCodigo()).isEqualTo("DADOS_INVALIDOS");
-        assertThat(erro.getMensagem()).isEqualTo("Senha e confirmação de senha não coincidem");
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
 
-        // O service não deve ser chamado
-        verify(service, never()).updateFuncionario(anyLong(), any(FuncionarioDTO.class));
-    }
-    
-    // DELETE funcionario
+		ErroResposta erro = (ErroResposta) resposta.getBody();
+		assertThat(erro.getCodigo()).isEqualTo("DADOS_INVALIDOS");
+		assertThat(erro.getMensagem()).isEqualTo("Senha e confirmação de senha não coincidem");
 
-    @Test
-    void deleteFuncionario_status200() {
-        Long id = 1L;
+		// O service não deve ser chamado
+		verify(service, never()).updateFuncionario(anyLong(), any(FuncionarioDTO.class));
+	}
 
-        // Mocka o existsById para retornar true
-        when(service.existsById(id)).thenReturn(true);
+	// DELETE funcionario
 
-        ResponseEntity<?> resposta = controller.deleteFuncionario(id);
+	@Test
+	void deleteFuncionario_status200() {
+		Long id = 1L;
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(resposta.getBody()).isEqualTo("Dados removidos");
+		// Mocka o existsById para retornar true
+		when(service.existsById(id)).thenReturn(true);
 
-        verify(service, times(1)).deleteFuncionario(id);
-    }
+		ResponseEntity<?> resposta = controller.deleteFuncionario(id);
 
-    @Test
-    void deleteFuncionario_status404() {
-        Long id = 99L;
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(resposta.getBody()).isEqualTo("Dados removidos");
 
-        // Mocka o existsById para retornar false
-        when(service.existsById(id)).thenReturn(false);
+		verify(service, times(1)).deleteFuncionario(id);
+	}
 
-        ResponseEntity<?> resposta = controller.deleteFuncionario(id);
+	@Test
+	void deleteFuncionario_status404() {
+		Long id = 99L;
 
-        assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
-        ErroResposta erro = (ErroResposta) resposta.getBody();
-        assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
-        assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+		// Mocka o existsById para retornar false
+		when(service.existsById(id)).thenReturn(false);
 
-        // Verifica que delete não foi chamado
-        verify(service, never()).deleteFuncionario(id);
-    }
+		ResponseEntity<?> resposta = controller.deleteFuncionario(id);
+
+		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
+		ErroResposta erro = (ErroResposta) resposta.getBody();
+		assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
+		assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+
+		// Verifica que delete não foi chamado
+		verify(service, never()).deleteFuncionario(id);
+	}
 
 }

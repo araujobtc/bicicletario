@@ -1,0 +1,59 @@
+package com.bikeunirio.bicicletario.aluguel.controller;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
+import com.bikeunirio.bicicletario.aluguel.entity.Cartao;
+import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
+import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
+import com.bikeunirio.bicicletario.aluguel.service.CartaoService;
+import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/")
+public class CartaoController {
+
+	@Autowired
+	private CartaoService cartaoService;
+
+	@Autowired
+	private ExternoService externoService;
+	
+	// UC07
+	@PutMapping("/cartaoDeCredito/{idCiclista}")
+    public ResponseEntity<?> updateCartao(@PathVariable Long idCiclista, @RequestBody @Valid MeioDePagamentoDTO meioDePagamentoDTO) {
+        
+		// TODO: alterar na prox entrega
+		if (externoService.isCartaoInvalido(meioDePagamentoDTO)) {
+			return GlobalExceptionHandler.unprocessableEntity("Cartão de crédito inválido");
+		}
+		
+		Optional<Cartao> resultado = cartaoService.updateCartao(idCiclista, meioDePagamentoDTO);
+        
+        if (resultado.isEmpty()) {
+            return GlobalExceptionHandler.notFound("Ciclista ou cartão de crédito não encontrado para o ID: " + idCiclista);
+        }
+        
+        Ciclista ciclista = resultado.get().getCiclista();
+        
+		// TODO: alterar na prox entrega
+		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "cartao atualizado eeeeeeh!!!");
+		if (!isEmailEnviado) {
+			String mensagem = "Cartao atualizado com sucesso, mas não foi possível enviar o e-mail de confirmação.";
+			return GlobalExceptionHandler.createdWithWarning(ciclista, mensagem, HttpStatus.CREATED); // 201
+		}
+
+		return ResponseEntity.ok(resultado.get());
+    }
+}

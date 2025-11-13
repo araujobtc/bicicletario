@@ -2,6 +2,11 @@ package com.bikeunirio.bicicletario.aluguel.dto;
 
 import java.time.LocalDate;
 
+import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,33 +19,32 @@ public class CiclistaDTO {
 	@NotBlank(message = "O nome é obrigatório")
 	private String nome;
 
-    @NotNull(message = "A data de nascimento é obrigatória")
-    @Past(message = "A data de nascimento deve ser no passado")
+	@NotNull(message = "A data de nascimento é obrigatória")
+	@Past(message = "A data de nascimento deve ser no passado")
 	private LocalDate nascimento;
 
-    @NotBlank(message = "O CPF é obrigatório")
-    @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
+	@Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
 	private String cpf;
 
-    @NotBlank(message = "A nacionalidade é obrigatória")
-	private String nacionalidade;
+	@NotBlank(message = "A nacionalidade é obrigatória")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+	private Nacionalidades nacionalidade;
 
 	@Email(message = "E-mail inválido")
 	@NotBlank(message = "O e-mail é obrigatório")
 	private String email;
 
-    @NotBlank(message = "A URL da foto do documento é obrigatória")
+	@NotBlank(message = "A URL da foto do documento é obrigatória")
 	private String urlFotoDocumento;
 
 	@NotBlank(message = "A senha é obrigatória")
 	private String senha;
 
 	@Valid
-	@NotNull(message = "Os dados do passaporte são obrigatórios")
 	private PassaporteDTO passaporte;
 
 	@Valid
-	@NotNull(message = "Os dados do meio de pagamento são obrigatórios")
 	private MeioDePagamentoDTO meioDePagamento;
 
 	public String getNome() {
@@ -67,11 +71,11 @@ public class CiclistaDTO {
 		this.cpf = cpf;
 	}
 
-	public String getNacionalidade() {
+	public Nacionalidades getNacionalidade() {
 		return nacionalidade;
 	}
 
-	public void setNacionalidade(String nacionalidade) {
+	public void setNacionalidade(Nacionalidades nacionalidade) {
 		this.nacionalidade = nacionalidade;
 	}
 
@@ -88,7 +92,7 @@ public class CiclistaDTO {
 	}
 
 	public void setUrlFotoDocumento(String urlFotoDocumento) {
-	    this.urlFotoDocumento = urlFotoDocumento;
+		this.urlFotoDocumento = urlFotoDocumento;
 	}
 
 	public String getSenha() {

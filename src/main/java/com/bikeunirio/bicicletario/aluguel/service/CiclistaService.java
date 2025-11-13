@@ -15,8 +15,15 @@ import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
 
 @Service
 public class CiclistaService {
-	
+
 	CiclistaRepository ciclistaRepository;
+	
+
+	public boolean existsByEmail(String email) {
+		return ciclistaRepository.existsByEmail(email);
+	}
+	
+	/**/
 
     public Ciclista createCiclista(CiclistaDTO ciclistaDTO) {
         Ciclista ciclista = new Ciclista();
@@ -48,8 +55,9 @@ public class CiclistaService {
 
 	public Optional<Ciclista> updateCiclista(long id, CiclistaDTO ciclistaDTO) {
 		return ciclistaRepository.findById(id).map(ciclista -> {
-			BeanUtils.copyProperties(ciclistaDTO, ciclista, "id", "matricula");
+			BeanUtils.copyProperties(ciclistaDTO, ciclista, "id");
 			return ciclistaRepository.save(ciclista);
 		});
 	}
+
 }

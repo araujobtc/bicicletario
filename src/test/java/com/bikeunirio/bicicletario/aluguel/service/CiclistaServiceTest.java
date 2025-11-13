@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
+import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
 import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +32,7 @@ public class CiclistaServiceTest {
     
     @Mock
     private CiclistaRepository repository; // Mocka o Repository
-
+    
     // POST ciclista
     @Test
     void deveCriarCiclistaComSucesso() {
@@ -81,7 +82,7 @@ public class CiclistaServiceTest {
         long id = 1L;
 
         when(repository.findById(id)).thenReturn(Optional.of(CiclistaExemplos.CICLISTA));
-        when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.save(any(Ciclista.class))).thenAnswer(params -> params.getArgument(0));
 
         Optional<Ciclista> resultado = service.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
 
@@ -89,10 +90,9 @@ public class CiclistaServiceTest {
         assertThat(resultado.get().getNome()).isEqualTo("Isabelle Araujo");
         assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
         assertThat(resultado.get().getCpf()).isEqualTo("12345678901");
-        assertThat(resultado.get().getNacionalidade()).isEqualTo("Brasileira");
+        assertThat(resultado.get().getNacionalidade()).isEqualTo(Nacionalidades.BRASILEIRO);
         assertThat(resultado.get().getUrlFotoDocumento()).isEqualTo("http://exemplo.com/doc.jpg");
 
-        // Verifica se save foi chamado
         verify(repository, times(1)).save(any(Ciclista.class));
     }
 
@@ -106,7 +106,6 @@ public class CiclistaServiceTest {
 
         assertThat(resultado).isNotPresent();
 
-        // Save não deve ser chamado
         verify(repository, never()).save(any(Ciclista.class));
     }
     

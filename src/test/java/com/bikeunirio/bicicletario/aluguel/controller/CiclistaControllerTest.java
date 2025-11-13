@@ -15,15 +15,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
+import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
+import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @ExtendWith(MockitoExtension.class)
 public class CiclistaControllerTest {
@@ -33,15 +36,20 @@ public class CiclistaControllerTest {
 
     @Mock
     private CiclistaService service; // Mocka o Service
+    
+	@Mock
+	private ExternoService externoService;
 
     // POST ciclista
     @Test
     void deveRetornarStatus201ECorpoCiclistaAoCadastrarComSucesso() {
-        
-        
         when(service.createCiclista(any(CiclistaDTO.class))).thenReturn(CiclistaExemplos.CICLISTA);
+        when(service.existsByEmail(any(String.class))).thenReturn(false);
+        
+		when(externoService.isCartaoInvalido(Mockito.any(MeioDePagamentoDTO.class))).thenReturn(false);
+		when(externoService.enviarEmail(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(true);
 
-        ResponseEntity<Ciclista> response = controller.createCiclista(CiclistaExemplos.CICLISTA_DTO);
+        ResponseEntity<?> response = controller.createCiclista(CiclistaExemplos.CICLISTA_DTO);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode(), 
                      "O status HTTP deve ser 201 CREATED para criação de recurso.");
@@ -103,6 +111,20 @@ public class CiclistaControllerTest {
         ErroResposta erro = (ErroResposta) resposta.getBody();
         assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
         assertThat(erro.getMensagem()).isEqualTo("Ciclista não encontrado");
+    }
+    
+    //
+    
+    // GET existeEmail
+    @Test
+    void deveRetornarStatus200ETrueQuandoEmailCadastrado() {
+        String emailValido = "teste@exemplo.com.br";
+        when(service.existsByEmail(emailValido)).thenReturn(true);
+
+        boolean response = service.existsByEmail(emailValido);
+
+        assertEquals(true, response, "O valor deve ser TRUE.");
+        verify(service, times(1)).existsByEmail(emailValido);
     }
     
 }

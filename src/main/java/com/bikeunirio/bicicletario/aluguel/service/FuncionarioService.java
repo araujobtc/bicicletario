@@ -1,5 +1,7 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,8 @@ public class FuncionarioService {
 		// exceto id e matricula, que não devem ser alterados
 		BeanUtils.copyProperties(funcionarioDTO, funcionario, "id", "matricula");
 
+		funcionario.setMatricula(Long.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")).toString()));
+		
 		return funcionarioRepository.save(funcionario);
 	}
 
