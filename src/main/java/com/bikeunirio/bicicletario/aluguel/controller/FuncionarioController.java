@@ -41,7 +41,7 @@ public class FuncionarioController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createFuncionario(@Valid @RequestBody FuncionarioDTO funcionarioDTO) {
+	public ResponseEntity<Object> createFuncionario(@Valid @RequestBody FuncionarioDTO funcionarioDTO) {
 
 		// Valida se senha e confirmação são iguais
 		if (!funcionarioDTO.getSenha().equals(funcionarioDTO.getConfirmacaoSenha())) {
@@ -53,7 +53,7 @@ public class FuncionarioController {
 	}
 
 	@GetMapping("/{idFuncionario}")
-	public ResponseEntity<?> readFuncionario(@PathVariable Long idFuncionario) {
+	public ResponseEntity<Object> readFuncionario(@PathVariable Long idFuncionario) {
 		Optional<Funcionario> funcionario = funcionarioService.readFuncionario(idFuncionario);
 
 		if (funcionario.isPresent()) {
@@ -64,7 +64,7 @@ public class FuncionarioController {
 	}
 
 	@PutMapping("/{idFuncionario}")
-	public ResponseEntity<?> updateFuncionario(@PathVariable Long idFuncionario,
+	public ResponseEntity<Object> updateFuncionario(@PathVariable Long idFuncionario,
 			@RequestBody @Valid FuncionarioDTO funcionarioDTO) {
 
 		// Valida se senha e confirmação são iguais
@@ -83,7 +83,7 @@ public class FuncionarioController {
 
 	// UC15 A2.3 O sistema exclui o registro.
 	@DeleteMapping("/{idFuncionario}")
-	public ResponseEntity<?> deleteFuncionario(
+	public ResponseEntity<Object> deleteFuncionario(
 			@PathVariable @Min(value = 1, message = "O ID do funcionário deve ser maior que zero") Long idFuncionario) {
 		if (funcionarioService.existsById(idFuncionario)) {
 			funcionarioService.deleteFuncionario(idFuncionario);

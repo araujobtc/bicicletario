@@ -34,7 +34,7 @@ public class CartaoController {
 
 	// UC07
 	@PutMapping("/cartaoDeCredito/{idCiclista}")
-    public ResponseEntity<?> updateCartao(@PathVariable Long idCiclista, @RequestBody @Valid MeioDePagamentoDTO meioDePagamentoDTO) {
+    public ResponseEntity<Object> updateCartao(@PathVariable Long idCiclista, @RequestBody @Valid MeioDePagamentoDTO meioDePagamentoDTO) {
         
 		// COMENT: alterar na prox entrega
 		if (externoService.isCartaoInvalido(meioDePagamentoDTO)) {

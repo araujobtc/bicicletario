@@ -29,7 +29,7 @@ public class CiclistaController {
 	private CiclistaService ciclistaService;
 
 	private ExternoService externoService;
-	
+
 	public CiclistaController(CiclistaService ciclistaService, ExternoService externoService) {
 		this.ciclistaService = ciclistaService;
 		this.externoService = externoService;
@@ -37,14 +37,14 @@ public class CiclistaController {
 
 	// UC01
 	@PostMapping
-	public ResponseEntity<?> createCiclista(@Valid @RequestBody CiclistaDTO ciclistaDTO) {
+	public ResponseEntity<Object> createCiclista(@Valid @RequestBody CiclistaDTO ciclistaDTO) {
 		if (ciclistaService.existsByEmail(ciclistaDTO.getEmail())) {
 			return GlobalExceptionHandler.unprocessableEntity("Email já cadastrado!");
 		}
 
 		boolean isBrasileiro = ciclistaDTO.getNacionalidade().equals(Nacionalidades.BRASILEIRO);
 
-		if (isBrasileiro && ciclistaDTO.getCpf() == null ) {
+		if (isBrasileiro && ciclistaDTO.getCpf() == null) {
 			return GlobalExceptionHandler.unprocessableEntity("Para ciclistas brasileiros, o campo CPF é obrigatório.");
 		}
 
@@ -52,10 +52,9 @@ public class CiclistaController {
 			return GlobalExceptionHandler
 					.unprocessableEntity("Para ciclistas estrangeiros, os dados do Passaporte são obrigatórios.");
 		}
-		
+
 		if (ciclistaDTO.getMeioDePagamento() == null) {
-			return GlobalExceptionHandler
-					.unprocessableEntity("É necessário informar os dados do meio de pagamento.");
+			return GlobalExceptionHandler.unprocessableEntity("É necessário informar os dados do meio de pagamento.");
 		}
 
 		// COMENT: alterar na prox entrega
@@ -80,7 +79,7 @@ public class CiclistaController {
 	}
 
 	@GetMapping("/{idCiclista}")
-	public ResponseEntity<?> readCiclista(@PathVariable Long idCiclista) {
+	public ResponseEntity<Object> readCiclista(@PathVariable Long idCiclista) {
 		Optional<Ciclista> ciclista = ciclistaService.readCiclista(idCiclista);
 
 		if (ciclista.isPresent()) {
@@ -95,15 +94,16 @@ public class CiclistaController {
 	// swagger n pede senha, UC06 pede senha
 	// add senha e confirmacao no ciclista
 	@PutMapping("/{idCiclista}")
-	public ResponseEntity<?> updateCiclista(@PathVariable Long idCiclista, @RequestBody @Valid CiclistaDTO ciclistaDTO) {
+	public ResponseEntity<Object> updateCiclista(@PathVariable Long idCiclista,
+			@RequestBody @Valid CiclistaDTO ciclistaDTO) {
 		Optional<Ciclista> atualizado = ciclistaService.updateCiclista(idCiclista, ciclistaDTO);
 
 		if (!atualizado.isPresent()) {
 			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
 		}
-		
+
 		Ciclista ciclista = atualizado.get();
-		
+
 		// COMENT: alterar na prox entrega
 		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "atualizado eeeeeeh!!!");
 		if (!isEmailEnviado) {
@@ -112,15 +112,11 @@ public class CiclistaController {
 		}
 		return ResponseEntity.ok(ciclista);
 	}
-
-	// função 0 UC02 @PostMapping("/{idCiclista}/ativar")public void ativar() {}
-
-	//função 1 @GetMapping("/{idCiclista}/permiteAluguel") public void ciclistaTemPermissao() {}
-
-	//função 2 @GetMapping("/{idCiclista}")public void getBicicletaAlugada() {}
+	
+	//
 
 	@GetMapping("/existeEmail/{email}")
-	public ResponseEntity<?> isEmailCadastrado(@PathVariable String email) {
+	public ResponseEntity<Object> isEmailCadastrado(@PathVariable String email) {
 		String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
 		if (email == null || email.isEmpty() || email.isBlank()) {

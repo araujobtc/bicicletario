@@ -1,5 +1,7 @@
 package com.bikeunirio.bicicletario.aluguel.webservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
@@ -7,14 +9,21 @@ import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 @Service
 public class ExternoService {
 
-	public boolean enviarEmail(String emailDestinatario, String Conteudo) {
-		System.out.println(emailDestinatario);
-		System.out.println(Conteudo);
-		return true;
-	}
-	
-	public boolean isCartaoInvalido(MeioDePagamentoDTO cartao) {
-		System.out.println(cartao.getNomeTitular());
-		return true;
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternoService.class);
+
+    public boolean enviarEmail(String emailDestinatario, String conteudo) {
+        LOGGER.info("📧 Tentativa de envio de e-mail para: {}. Conteúdo: {}", emailDestinatario, conteudo);
+        return true; 
+    }
+
+    public boolean isCartaoInvalido(MeioDePagamentoDTO cartao) {
+        LOGGER.debug("Iniciando validação de cartão do titular: {}", cartao.getNomeTitular());
+        if ("Titular Invalido".equalsIgnoreCase(cartao.getNomeTitular())) {
+             LOGGER.warn("Validação de cartão FALHOU: Cartão marcado como inválido para o titular.");
+             return true; 
+        }
+
+        LOGGER.debug("Validação de cartão concluída. Cartão considerado válido.");
+        return false;
+    }
 }

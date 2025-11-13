@@ -40,21 +40,21 @@ public class GlobalExceptionHandler {
 	 * tipo invalido. Usado na validação do parametro
 	 */
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-	public ResponseEntity<ErroResposta> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+	public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 		// 422
 		return unprocessableEntity("O valor do parâmetro '" + ex.getName() + "' é inválido.");
 	}
 
-	public static ResponseEntity<ErroResposta> notFound(String mensagem) {
+	public static ResponseEntity<Object> notFound(String mensagem) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroResposta(NAO_ENCONTRADO, mensagem));
 	}
 
-	public static ResponseEntity<ErroResposta> unprocessableEntity(String mensagem) {
+	public static ResponseEntity<Object> unprocessableEntity(String mensagem) {
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ErroResposta(DADOS_INVALIDOS, mensagem));
 	}
 
-	public static ResponseEntity<ErroResposta> badRequest(String mensagem) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroResposta(BAD_REQUEST, mensagem));
+	public static ResponseEntity<Object> badRequest(String mensagem) {
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroResposta(BAD_REQUEST, mensagem));
 	}
 
 	public static <T> ResponseEntity<T> createdWithWarning(T body, String mensagemAviso, HttpStatus status) {

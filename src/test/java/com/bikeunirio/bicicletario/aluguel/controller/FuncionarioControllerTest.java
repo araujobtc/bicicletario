@@ -62,7 +62,7 @@ class FuncionarioControllerTest {
 		// Mocka o service para retornar o funcionário criado
 		when(service.createFuncionario(Mockito.any(FuncionarioDTO.class))).thenReturn(FuncionarioExemplos.FUNCIONARIO);
 		// Chama o controller com o DTO válido
-		ResponseEntity<?> resposta = controller.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
+		ResponseEntity<Object> resposta = controller.createFuncionario(FuncionarioExemplos.FUNCIONARIO_DTO);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -105,7 +105,7 @@ class FuncionarioControllerTest {
 	void status200RetornarFuncionario() {
 		when(service.readFuncionario(1L)).thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
 
-		ResponseEntity<?> resposta = controller.readFuncionario(1L);
+		ResponseEntity<Object> resposta = controller.readFuncionario(1L);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
@@ -117,7 +117,7 @@ class FuncionarioControllerTest {
 	void status404RetornarFuncionarioNaoExiste() {
 		when(service.readFuncionario(2L)).thenReturn(Optional.empty());
 
-		ResponseEntity<?> resposta = controller.readFuncionario(2L);
+		ResponseEntity<Object> resposta = controller.readFuncionario(2L);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
@@ -136,12 +136,14 @@ class FuncionarioControllerTest {
 				"idFuncionario", null, null);
 
 		// Chama o handler diretamente
-		ResponseEntity<ErroResposta> resposta = new GlobalExceptionHandler().handleTypeMismatch(ex);
+		ResponseEntity<Object> resposta = new GlobalExceptionHandler().handleTypeMismatch(ex);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
-		assertThat(resposta.getBody().getCodigo()).isEqualTo("DADOS_INVALIDOS");
-		assertThat(resposta.getBody().getMensagem()).contains("O valor do parâmetro 'idFuncionario' é inválido.");
+		
+		ErroResposta erro = (ErroResposta) resposta.getBody();
+		assertThat(erro.getCodigo()).isEqualTo("DADOS_INVALIDOS");
+		assertThat(erro.getMensagem()).isEqualTo("O valor do parâmetro 'idFuncionario' é inválido.");
 	}
 
 	// PUT funcionario
@@ -152,7 +154,7 @@ class FuncionarioControllerTest {
 		when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class)))
 				.thenReturn(Optional.of(FuncionarioExemplos.FUNCIONARIO));
 
-		ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+		ResponseEntity<Object> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(resposta.getBody()).isInstanceOf(Funcionario.class);
@@ -170,7 +172,7 @@ class FuncionarioControllerTest {
 
 		when(service.updateFuncionario(eq(id), any(FuncionarioDTO.class))).thenReturn(Optional.empty());
 
-		ResponseEntity<?> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
+		ResponseEntity<Object> resposta = controller.updateFuncionario(id, FuncionarioExemplos.FUNCIONARIO_DTO);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
@@ -190,7 +192,7 @@ class FuncionarioControllerTest {
 		FuncionarioDTO dtoComSenhaErrada = new FuncionarioDTO();
 		BeanUtils.copyProperties(funcionario, dtoComSenhaErrada, "id");
 
-		ResponseEntity<?> resposta = controller.updateFuncionario(id, dtoComSenhaErrada);
+		ResponseEntity<Object> resposta = controller.updateFuncionario(id, dtoComSenhaErrada);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
@@ -212,7 +214,7 @@ class FuncionarioControllerTest {
 		// Mocka o existsById para retornar true
 		when(service.existsById(id)).thenReturn(true);
 
-		ResponseEntity<?> resposta = controller.deleteFuncionario(id);
+		ResponseEntity<Object> resposta = controller.deleteFuncionario(id);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(resposta.getBody()).isEqualTo("Dados removidos");
@@ -227,7 +229,7 @@ class FuncionarioControllerTest {
 		// Mocka o existsById para retornar false
 		when(service.existsById(id)).thenReturn(false);
 
-		ResponseEntity<?> resposta = controller.deleteFuncionario(id);
+		ResponseEntity<Object> resposta = controller.deleteFuncionario(id);
 
 		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
