@@ -42,9 +42,13 @@ class CartaoServiceTest {
         assertTrue(resultado.isPresent(), "O resultado deve ser Optional.of(Cartao).");
         
         Cartao cartaoAtualizado = resultado.get();
-        
+
         assertEquals(CiclistaExemplos.MEIOPAGAMENTO_DTO.getNumero(), cartaoAtualizado.getNumero(), 
                      "O número do cartão deve ser o novo valor do DTO.");
+        assertEquals(CiclistaExemplos.MEIOPAGAMENTO_DTO.getCvv(), cartaoAtualizado.getCvv(), 
+                "O cvv do cartão deve ser o novo valor do DTO.");
+        assertEquals(CiclistaExemplos.MEIOPAGAMENTO_DTO.getValidade(), cartaoAtualizado.getValidade(), 
+                "A validade do cartão deve ser o novo valor do DTO.");
         
         verify(repository, times(1)).save(any(Cartao.class));
         verify(repository, times(1)).findByCiclistaId(idCiclista);

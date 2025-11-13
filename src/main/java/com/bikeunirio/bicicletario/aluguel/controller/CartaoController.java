@@ -20,7 +20,7 @@ import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/cartaoDeCredito")
 public class CartaoController {
 
 	private CartaoService cartaoService;
@@ -33,7 +33,7 @@ public class CartaoController {
 	}
 
 	// UC07
-	@PutMapping("/cartaoDeCredito/{idCiclista}")
+	@PutMapping("/{idCiclista}")
     public ResponseEntity<Object> updateCartao(@PathVariable Long idCiclista, @RequestBody @Valid MeioDePagamentoDTO meioDePagamentoDTO) {
         
 		// COMENT: alterar na prox entrega
