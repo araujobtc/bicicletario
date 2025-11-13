@@ -36,7 +36,7 @@ public class FuncionarioService {
 		// exceto id e matricula, que não devem ser alterados
 		BeanUtils.copyProperties(funcionarioDTO, funcionario, "id", "matricula");
 
-		funcionario.setMatricula(Long.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss")).toString()));
+		funcionario.setMatricula(Long.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmss"))));
 		
 		return funcionarioRepository.save(funcionario);
 	}

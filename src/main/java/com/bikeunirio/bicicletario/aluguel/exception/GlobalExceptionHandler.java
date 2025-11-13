@@ -15,9 +15,9 @@ import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
 @RestControllerAdvice // Torna este handler global para todos os controllers
 public class GlobalExceptionHandler {
 
-	private static String DADOS_INVALIDOS = "DADOS_INVALIDOS";
-	private static String NAO_ENCONTRADO = "NAO_ENCONTRADO";
-	private static String BAD_REQUEST = "REQUISICAO_FALHA";
+	private static final String DADOS_INVALIDOS = "DADOS_INVALIDOS";
+	private static final String NAO_ENCONTRADO = "NAO_ENCONTRADO";
+	private static final String BAD_REQUEST = "REQUISICAO_FALHA";
 
 	/*
 	 * O método com @ExceptionHandler(MethodArgumentNotValidException.class) será

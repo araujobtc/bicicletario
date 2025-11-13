@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class AluguelController {
 	
-    //@Autowired private AluguelService aluguelService ;
-
-
+    //Este é o @Autowired private AluguelService aluguelService ;
 
 	// UC16
 	/*
@@ -32,10 +30,8 @@ public class AluguelController {
 	 * de uso é encerrado
 	 */
     
-    // UC03 @PostMapping("/aluguel")public void alugarBicicleta() {}
+    // Caso de uso 03 @PostMapping("/aluguel")public void alugarBicicleta() {}
 
-	// UC04 e UC16 @PostMapping("/devolucao")//public void devolverBicicleta() {}
-	// mater apenas se apagar dados somente relacionado a aluguel
-	// @PostMapping("/restaurarBanco")public void restaurarBD() {
-		//}
+	// Casos de uso UC04 e UC16 @PostMapping("/devolucao")//public void devolverBicicleta() {}
+	// mater apenas se apagar dados somente relacionado a aluguel @PostMapping("/restaurarBanco")public void restaurarBD() { }
 }

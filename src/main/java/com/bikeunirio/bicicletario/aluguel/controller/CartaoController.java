@@ -2,7 +2,6 @@ package com.bikeunirio.bicicletario.aluguel.controller;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,17 +23,20 @@ import jakarta.validation.Valid;
 @RequestMapping("/")
 public class CartaoController {
 
-	@Autowired
 	private CartaoService cartaoService;
 
-	@Autowired
 	private ExternoService externoService;
 	
+	public CartaoController(CartaoService cartaoService, ExternoService externoService) {
+		this.cartaoService = cartaoService;
+		this.externoService = externoService;
+	}
+
 	// UC07
 	@PutMapping("/cartaoDeCredito/{idCiclista}")
     public ResponseEntity<?> updateCartao(@PathVariable Long idCiclista, @RequestBody @Valid MeioDePagamentoDTO meioDePagamentoDTO) {
         
-		// TODO: alterar na prox entrega
+		// COMENT: alterar na prox entrega
 		if (externoService.isCartaoInvalido(meioDePagamentoDTO)) {
 			return GlobalExceptionHandler.unprocessableEntity("Cartão de crédito inválido");
 		}
@@ -47,7 +49,7 @@ public class CartaoController {
         
         Ciclista ciclista = resultado.get().getCiclista();
         
-		// TODO: alterar na prox entrega
+		// COMENT: alterar na prox entrega
 		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "cartao atualizado eeeeeeh!!!");
 		if (!isEmailEnviado) {
 			String mensagem = "Cartao atualizado com sucesso, mas não foi possível enviar o e-mail de confirmação.";

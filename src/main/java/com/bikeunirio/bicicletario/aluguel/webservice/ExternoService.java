@@ -8,10 +8,13 @@ import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 public class ExternoService {
 
 	public boolean enviarEmail(String emailDestinatario, String Conteudo) {
+		System.out.println(emailDestinatario);
+		System.out.println(Conteudo);
 		return true;
 	}
 	
 	public boolean isCartaoInvalido(MeioDePagamentoDTO cartao) {
+		System.out.println(cartao.getNomeTitular());
 		return true;
 	}
 }

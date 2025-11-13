@@ -25,7 +25,7 @@ import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
 import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class CiclistaServiceTest {
+class CiclistaServiceTest {
 
     @InjectMocks
     private CiclistaService service;

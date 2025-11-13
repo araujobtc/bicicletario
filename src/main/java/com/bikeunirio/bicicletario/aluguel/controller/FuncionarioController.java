@@ -3,7 +3,6 @@ package com.bikeunirio.bicicletario.aluguel.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +25,11 @@ import jakarta.validation.constraints.Min;
 @RequestMapping("/funcionario")
 public class FuncionarioController {
 
-	@Autowired
 	private FuncionarioService funcionarioService;
+
+	public FuncionarioController(FuncionarioService funcionarioService) {
+		this.funcionarioService = funcionarioService;
+	}
 
 	// UC15
 	// Todos os dados do formulário são obrigatórios.
@@ -41,15 +43,14 @@ public class FuncionarioController {
 	@PostMapping
 	public ResponseEntity<?> createFuncionario(@Valid @RequestBody FuncionarioDTO funcionarioDTO) {
 
-	    // Valida se senha e confirmação são iguais
-	    if (!funcionarioDTO.getSenha().equals(funcionarioDTO.getConfirmacaoSenha())) {
+		// Valida se senha e confirmação são iguais
+		if (!funcionarioDTO.getSenha().equals(funcionarioDTO.getConfirmacaoSenha())) {
 			return GlobalExceptionHandler.unprocessableEntity("Senha e confirmação de senha não coincidem");
-	    }
-	    Funcionario funcionario = funcionarioService.createFuncionario(funcionarioDTO);
+		}
+		Funcionario funcionario = funcionarioService.createFuncionario(funcionarioDTO);
 
-	    return ResponseEntity.ok(funcionario); // 200
+		return ResponseEntity.ok(funcionario); // 200
 	}
-
 
 	@GetMapping("/{idFuncionario}")
 	public ResponseEntity<?> readFuncionario(@PathVariable Long idFuncionario) {
@@ -58,12 +59,13 @@ public class FuncionarioController {
 		if (funcionario.isPresent()) {
 			return ResponseEntity.ok(funcionario.get()); // 200
 		} else {
-			return GlobalExceptionHandler.notFound("Funcionário não encontrado");
+			return GlobalExceptionHandler.notFound("Funcionário não cadastrado");
 		}
 	}
 
 	@PutMapping("/{idFuncionario}")
-	public ResponseEntity<?> updateFuncionario(@PathVariable Long idFuncionario, @RequestBody @Valid FuncionarioDTO funcionarioDTO) {
+	public ResponseEntity<?> updateFuncionario(@PathVariable Long idFuncionario,
+			@RequestBody @Valid FuncionarioDTO funcionarioDTO) {
 
 		// Valida se senha e confirmação são iguais
 		if (!funcionarioDTO.getSenha().equals(funcionarioDTO.getConfirmacaoSenha())) {
@@ -80,13 +82,14 @@ public class FuncionarioController {
 	}
 
 	// UC15 A2.3 O sistema exclui o registro.
-    @DeleteMapping("/{idFuncionario}")
-    public ResponseEntity<?> deleteFuncionario(@PathVariable @Min(value = 1, message = "O ID do funcionário deve ser maior que zero") Long idFuncionario) {
-        if (funcionarioService.existsById(idFuncionario)) {
-            funcionarioService.deleteFuncionario(idFuncionario);
-            return ResponseEntity.ok("Dados removidos"); // 200
-        }
-        return GlobalExceptionHandler.notFound("Funcionário não encontrado");
-    }
-	
+	@DeleteMapping("/{idFuncionario}")
+	public ResponseEntity<?> deleteFuncionario(
+			@PathVariable @Min(value = 1, message = "O ID do funcionário deve ser maior que zero") Long idFuncionario) {
+		if (funcionarioService.existsById(idFuncionario)) {
+			funcionarioService.deleteFuncionario(idFuncionario);
+			return ResponseEntity.ok("Dados removidos"); // 200
+		}
+		return GlobalExceptionHandler.notFound("Não foi encontrado funcionário com este id");
+	}
+
 }

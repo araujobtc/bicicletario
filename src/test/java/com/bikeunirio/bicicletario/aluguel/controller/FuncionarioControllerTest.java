@@ -35,7 +35,7 @@ import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.service.FuncionarioService;
 
 @ExtendWith(MockitoExtension.class)
-public class FuncionarioControllerTest {
+class FuncionarioControllerTest {
 	@InjectMocks
 	private FuncionarioController controller;
 

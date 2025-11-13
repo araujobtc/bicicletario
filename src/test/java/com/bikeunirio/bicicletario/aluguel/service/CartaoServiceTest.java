@@ -21,7 +21,7 @@ import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.repository.CartaoRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class CartaoServiceTest {
+class CartaoServiceTest {
 
     @InjectMocks
     private CartaoService service;

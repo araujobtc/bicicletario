@@ -23,7 +23,7 @@ import com.bikeunirio.bicicletario.aluguel.enums.FuncionarioExemplos;
 import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class FuncionarioServiceTest {
+class FuncionarioServiceTest {
 
 	@InjectMocks
 	private FuncionarioService service;

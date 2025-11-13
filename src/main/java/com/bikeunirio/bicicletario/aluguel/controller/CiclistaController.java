@@ -2,7 +2,6 @@ package com.bikeunirio.bicicletario.aluguel.controller;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +26,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/ciclista")
 public class CiclistaController {
 
-	@Autowired
 	private CiclistaService ciclistaService;
 
-	@Autowired
 	private ExternoService externoService;
+	
+	public CiclistaController(CiclistaService ciclistaService, ExternoService externoService) {
+		this.ciclistaService = ciclistaService;
+		this.externoService = externoService;
+	}
 
 	// UC01
 	@PostMapping
@@ -42,28 +44,28 @@ public class CiclistaController {
 
 		boolean isBrasileiro = ciclistaDTO.getNacionalidade().equals(Nacionalidades.BRASILEIRO);
 
-		if (isBrasileiro && ciclistaDTO.getCpf().equals(null)) {
+		if (isBrasileiro && ciclistaDTO.getCpf() == null ) {
 			return GlobalExceptionHandler.unprocessableEntity("Para ciclistas brasileiros, o campo CPF é obrigatório.");
 		}
 
-		if (!isBrasileiro && ciclistaDTO.getPassaporte().equals(null)) {
+		if (!isBrasileiro && ciclistaDTO.getPassaporte() == null) {
 			return GlobalExceptionHandler
 					.unprocessableEntity("Para ciclistas estrangeiros, os dados do Passaporte são obrigatórios.");
 		}
 		
-		if (ciclistaDTO.getMeioDePagamento().equals(null)) {
+		if (ciclistaDTO.getMeioDePagamento() == null) {
 			return GlobalExceptionHandler
 					.unprocessableEntity("É necessário informar os dados do meio de pagamento.");
 		}
 
-		// TODO: alterar na prox entrega
+		// COMENT: alterar na prox entrega
 		if (externoService.isCartaoInvalido(ciclistaDTO.getMeioDePagamento())) {
 			return GlobalExceptionHandler.unprocessableEntity("Cartão de crédito inválido");
 		}
 
 		Ciclista ciclista = ciclistaService.createCiclista(ciclistaDTO);
 
-		// TODO: alterar na prox entrega
+		// COMENT: alterar na prox entrega
 		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "cadastrado eeeeeeh!!!");
 		if (!isEmailEnviado) {
 			String mensagem = "Ciclista cadastrado com sucesso, mas não foi possível enviar o e-mail de confirmação.";
@@ -102,7 +104,7 @@ public class CiclistaController {
 		
 		Ciclista ciclista = atualizado.get();
 		
-		// TODO: alterar na prox entrega
+		// COMENT: alterar na prox entrega
 		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "atualizado eeeeeeh!!!");
 		if (!isEmailEnviado) {
 			String mensagem = "Cadastrado atualizado com sucesso, mas não foi possível enviar o e-mail de confirmação.";
@@ -111,21 +113,21 @@ public class CiclistaController {
 		return ResponseEntity.ok(ciclista);
 	}
 
-	// UC02 @PostMapping("/{idCiclista}/ativar")public void ativar() {}
+	// função 0 UC02 @PostMapping("/{idCiclista}/ativar")public void ativar() {}
 
-	//@GetMapping("/{idCiclista}/permiteAluguel") public void ciclistaTemPermissao() {}
+	//função 1 @GetMapping("/{idCiclista}/permiteAluguel") public void ciclistaTemPermissao() {}
 
-	//@GetMapping("/{idCiclista}")public void getBicicletaAlugada() {}
+	//função 2 @GetMapping("/{idCiclista}")public void getBicicletaAlugada() {}
 
 	@GetMapping("/existeEmail/{email}")
 	public ResponseEntity<?> isEmailCadastrado(@PathVariable String email) {
-		String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+		String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
 		if (email == null || email.isEmpty() || email.isBlank()) {
 			return GlobalExceptionHandler.badRequest("O e-mail deve ser fornecido como parâmetro.");
 		}
 
-		if (!email.matches(EMAIL_REGEX)) {
+		if (!email.matches(emailRegex)) {
 			return GlobalExceptionHandler.unprocessableEntity("E-mail com formato inválido.");
 		}
 
