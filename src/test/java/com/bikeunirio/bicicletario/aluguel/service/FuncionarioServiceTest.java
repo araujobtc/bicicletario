@@ -41,7 +41,7 @@ class FuncionarioServiceTest {
 
 		assertThat(resultado).hasSize(1);
 		assertThat(resultado.get(0).getNome()).isEqualTo("Isabelle");
-		assertThat(resultado.get(0).getFuncao()).isEqualTo(FuncoesFuncionario.ADMINISTRATIVO);
+		assertThat(resultado.get(0).getFuncao()).isEqualTo(FuncoesFuncionario.ADMINISTRATIVO.getValor());
 
 		verify(repository, times(1)).findAll();
 	}

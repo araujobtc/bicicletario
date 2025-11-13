@@ -42,7 +42,7 @@ public class CiclistaController {
 			return GlobalExceptionHandler.unprocessableEntity("Email já cadastrado!");
 		}
 
-		boolean isBrasileiro = ciclistaDTO.getNacionalidade().equals(Nacionalidades.BRASILEIRO);
+		boolean isBrasileiro = ciclistaDTO.getNacionalidade().equals(Nacionalidades.BRASILEIRO.getValor());
 
 		if (isBrasileiro && ciclistaDTO.getCpf() == null) {
 			return GlobalExceptionHandler.unprocessableEntity("Para ciclistas brasileiros, o campo CPF é obrigatório.");

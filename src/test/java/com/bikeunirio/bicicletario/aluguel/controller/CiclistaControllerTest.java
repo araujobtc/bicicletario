@@ -49,7 +49,7 @@ class CiclistaControllerTest {
 		dto.setNome("Isabelle Araujo");
 		dto.setEmail("isa@exemplo.com");
 		dto.setCpf("12345678901");
-		dto.setNacionalidade(Nacionalidades.BRASILEIRO);
+		dto.setNacionalidade(Nacionalidades.BRASILEIRO.getValor());
 		dto.setSenha("senha123");
 		dto.setUrlFotoDocumento("foto.png");
 		dto.setNascimento(java.time.LocalDate.of(2000, 1, 1));
@@ -72,12 +72,12 @@ class CiclistaControllerTest {
 		assertThat(r2.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 
 		dto.setCpf(null);
-		dto.setNacionalidade(Nacionalidades.ESTRANGEIRO);
+		dto.setNacionalidade(Nacionalidades.ESTRANGEIRO.getValor());
 		dto.setPassaporte(null);
 		ResponseEntity<Object> r3 = controller.createCiclista(dto);
 		assertThat(r3.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
 
-		dto.setNacionalidade(Nacionalidades.BRASILEIRO);
+		dto.setNacionalidade(Nacionalidades.BRASILEIRO.getValor());
 		dto.setCpf("12345678901");
 		dto.setMeioDePagamento(null);
 		ResponseEntity<Object> r4 = controller.createCiclista(dto);

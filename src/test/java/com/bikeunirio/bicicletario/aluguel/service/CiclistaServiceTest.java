@@ -90,7 +90,7 @@ class CiclistaServiceTest {
         assertThat(resultado.get().getNome()).isEqualTo("Isabelle Araujo");
         assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
         assertThat(resultado.get().getCpf()).isEqualTo("12345678901");
-        assertThat(resultado.get().getNacionalidade()).isEqualTo(Nacionalidades.BRASILEIRO);
+        assertThat(resultado.get().getNacionalidade()).isEqualTo(Nacionalidades.BRASILEIRO.getValor());
         assertThat(resultado.get().getUrlFotoDocumento()).isEqualTo("http://exemplo.com/doc.jpg");
 
         verify(repository, times(1)).save(any(Ciclista.class));
