@@ -117,7 +117,7 @@ public class CiclistaController {
 		//
 	}
 
-	@GetMapping("/{idCiclista}/permiteAluguel}")
+	@GetMapping("/{idCiclista}/permiteAluguel")
 	public void ciclistaTemPermissao() {
 		//
 	}

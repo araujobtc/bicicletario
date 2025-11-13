@@ -30,7 +30,6 @@ public class CartaoServiceTest {
     private CartaoRepository repository; // Mocka o Repository
     
     // PUT cartao
-    
     @Test
     void deveAtualizarCartaoExistenteESalvarComSucesso() {
     	long idCiclista = 1L;
