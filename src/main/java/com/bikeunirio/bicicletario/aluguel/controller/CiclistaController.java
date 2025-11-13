@@ -111,21 +111,11 @@ public class CiclistaController {
 		return ResponseEntity.ok(ciclista);
 	}
 
-	// UC02
-	@PostMapping("/{idCiclista}/ativar")
-	public void ativar() {
-		//
-	}
+	// UC02 @PostMapping("/{idCiclista}/ativar")public void ativar() {}
 
-	@GetMapping("/{idCiclista}/permiteAluguel")
-	public void ciclistaTemPermissao() {
-		//
-	}
+	//@GetMapping("/{idCiclista}/permiteAluguel") public void ciclistaTemPermissao() {}
 
-	@GetMapping("/{idCiclista}")
-	public void getBicicletaAlugada() {
-		//
-	}
+	//@GetMapping("/{idCiclista}")public void getBicicletaAlugada() {}
 
 	@GetMapping("/existeEmail/{email}")
 	public ResponseEntity<?> isEmailCadastrado(@PathVariable String email) {

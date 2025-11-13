@@ -28,15 +28,31 @@ public class MeioDePagamentoDTO {
 		return nomeTitular;
 	}
 
+	public void setNomeTitular(String nomeTitular) {
+		this.nomeTitular = nomeTitular;
+	}
+
 	public String getNumero() {
 		return numero;
+	}
+
+	public void setNumero(String numero) {
+		this.numero = numero;
 	}
 
 	public LocalDate getValidade() {
 		return validade;
 	}
 
+	public void setValidade(LocalDate validade) {
+		this.validade = validade;
+	}
+
 	public String getCvv() {
 		return cvv;
+	}
+
+	public void setCvv(String cvv) {
+		this.cvv = cvv;
 	}
 }

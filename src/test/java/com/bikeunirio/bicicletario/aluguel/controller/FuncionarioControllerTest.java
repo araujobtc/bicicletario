@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -183,14 +184,11 @@ public class FuncionarioControllerTest {
 	void status422AtualizarFuncionarioSenhaDiferenteDaConfirmacao() {
 		long id = 1L;
 
+        Funcionario funcionario = new Funcionario();
+        funcionario.setCpf("senha123");
+        funcionario.setSenha("outrasenha");
 		FuncionarioDTO dtoComSenhaErrada = new FuncionarioDTO();
-		dtoComSenhaErrada.setNome("Isabelle");
-		dtoComSenhaErrada.setEmail("isa@exemplo.com");
-		dtoComSenhaErrada.setIdade(25);
-		dtoComSenhaErrada.setFuncao("Atendente");
-		dtoComSenhaErrada.setCpf("12345678901");
-		dtoComSenhaErrada.setSenha("senha123");
-		dtoComSenhaErrada.setConfirmacaoSenha("outrasenha");
+		BeanUtils.copyProperties(funcionario, dtoComSenhaErrada, "id");
 
 		ResponseEntity<?> resposta = controller.updateFuncionario(id, dtoComSenhaErrada);
 

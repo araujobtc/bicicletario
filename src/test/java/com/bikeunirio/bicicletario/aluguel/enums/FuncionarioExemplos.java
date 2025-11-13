@@ -1,7 +1,5 @@
 package com.bikeunirio.bicicletario.aluguel.enums;
 
-import org.springframework.beans.BeanUtils;
-
 import com.bikeunirio.bicicletario.aluguel.dto.FuncionarioDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
 
@@ -18,10 +16,16 @@ public class FuncionarioExemplos {
         FUNCIONARIO.setFuncao("Atendente");
         FUNCIONARIO.setCpf("12345678901");
         FUNCIONARIO.setSenha("senha123");
-        
-    	FUNCIONARIO_DTO = new FuncionarioDTO();
-
-		BeanUtils.copyProperties(FUNCIONARIO, FUNCIONARIO_DTO, "id");
     }
-
+    
+    static {
+    	FUNCIONARIO_DTO = new FuncionarioDTO();
+    	FUNCIONARIO_DTO.setNome("Isabelle");
+        FUNCIONARIO_DTO.setEmail("isa@exemplo.com");
+        FUNCIONARIO_DTO.setIdade(25);
+        FUNCIONARIO_DTO.setFuncao("Atendente");
+        FUNCIONARIO_DTO.setCpf("12345678901");
+        FUNCIONARIO_DTO.setSenha("senha123");
+        FUNCIONARIO_DTO.setConfirmacaoSenha("senha123");
+    }
 }

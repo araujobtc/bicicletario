@@ -2,8 +2,6 @@ package com.bikeunirio.bicicletario.aluguel.enums;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.BeanUtils;
-
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.PassaporteDTO;
@@ -28,7 +26,9 @@ public class CiclistaExemplos {
     	PASSAPORTE.setPais("BR");
     	
         PASSAPORTE_DTO = new PassaporteDTO();
-		BeanUtils.copyProperties(PASSAPORTE, PASSAPORTE_DTO, "id");
+        PASSAPORTE_DTO.setNumero("XPTO12345");
+        PASSAPORTE_DTO.setValidade(LocalDate.of(2030, 5, 10));
+        PASSAPORTE_DTO.setPais("BR");
     }
     
     static {
@@ -37,9 +37,12 @@ public class CiclistaExemplos {
         CARTAO.setNumero("1234567812345678");
         CARTAO.setValidade(LocalDate.of(2030, 12, 31));
         CARTAO.setCvv("123");
-
+        
         MEIOPAGAMENTO_DTO = new MeioDePagamentoDTO();
-		BeanUtils.copyProperties(CARTAO, MEIOPAGAMENTO_DTO, "id");
+        MEIOPAGAMENTO_DTO.setNomeTitular("Isabelle Araujo");
+        MEIOPAGAMENTO_DTO.setNumero("1234567812345678");
+        MEIOPAGAMENTO_DTO.setValidade(LocalDate.of(2030, 12, 31));
+        MEIOPAGAMENTO_DTO.setCvv("123");
     }
     
     static {
@@ -54,17 +57,18 @@ public class CiclistaExemplos {
         CICLISTA.setPassaporte(PASSAPORTE);
         CICLISTA.setCartao(CARTAO);
 
-        CARTAO.setCiclista(CICLISTA);
-
+        CARTAO.setCiclista(CICLISTA); // vincula os dois
+        
         CICLISTA_DTO = new CiclistaDTO();
-
-		BeanUtils.copyProperties(CICLISTA, CICLISTA_DTO, "id", "passaporte", "meioDePagamento");
-		
+        CICLISTA_DTO.setNome("Isabelle Araujo");
+        CICLISTA_DTO.setNascimento(LocalDate.of(2000, 1, 1));
+        CICLISTA_DTO.setCpf("12345678901");
+        CICLISTA_DTO.setNacionalidade(Nacionalidades.BRASILEIRO);
+        CICLISTA_DTO.setEmail("isa@exemplo.com");
+        CICLISTA_DTO.setUrlFotoDocumento("http://exemplo.com/doc.jpg");
+        CICLISTA_DTO.setSenha("senha123");
         CICLISTA_DTO.setPassaporte(PASSAPORTE_DTO);
         CICLISTA_DTO.setMeioDePagamento(MEIOPAGAMENTO_DTO);
-        
-        
     }
     
 }
-
