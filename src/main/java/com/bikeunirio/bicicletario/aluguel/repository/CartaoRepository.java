@@ -10,5 +10,5 @@ import com.bikeunirio.bicicletario.aluguel.entity.Cartao;
 @Repository
 public interface CartaoRepository extends JpaRepository<Cartao, Long> {
 
-	public Optional<Cartao> findByIdCiclista(long idCiclista);
+	public Optional<Cartao> findByCiclistaId(long idCiclista);
 }

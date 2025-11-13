@@ -123,7 +123,7 @@ class FuncionarioControllerTest {
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
 		ErroResposta erro = (ErroResposta) resposta.getBody();
 		assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
-		assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+		assertThat(erro.getMensagem()).isEqualTo("Funcionário não cadastrado");
 	}
 
 	/*
@@ -233,7 +233,7 @@ class FuncionarioControllerTest {
 		assertThat(resposta.getBody()).isInstanceOf(ErroResposta.class);
 		ErroResposta erro = (ErroResposta) resposta.getBody();
 		assertThat(erro.getCodigo()).isEqualTo("NAO_ENCONTRADO");
-		assertThat(erro.getMensagem()).isEqualTo("Funcionário não encontrado");
+		assertThat(erro.getMensagem()).isEqualTo("Não foi encontrado funcionário com este id");
 
 		// Verifica que delete não foi chamado
 		verify(service, never()).deleteFuncionario(id);

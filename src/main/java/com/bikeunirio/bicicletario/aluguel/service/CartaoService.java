@@ -15,7 +15,7 @@ public class CartaoService {
 	CartaoRepository repository;
 
 	public Optional<Cartao> updateCartao(long idCiclista, MeioDePagamentoDTO meioDePagamentoDTO) {
-		return repository.findByIdCiclista(idCiclista).map(cartao -> {
+		return repository.findByCiclistaId(idCiclista).map(cartao -> {
 			BeanUtils.copyProperties(meioDePagamentoDTO, cartao, "id");
 			return repository.save(cartao);
 		});

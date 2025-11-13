@@ -34,7 +34,7 @@ class CartaoServiceTest {
     void deveAtualizarCartaoExistenteESalvarComSucesso() {
     	long idCiclista = 1L;
         
-        when(repository.findByIdCiclista(idCiclista)).thenReturn(Optional.of(CiclistaExemplos.CARTAO));
+        when(repository.findByCiclistaId(idCiclista)).thenReturn(Optional.of(CiclistaExemplos.CARTAO));
         when(repository.save(any(Cartao.class))).thenAnswer(params -> params.getArgument(0));
 
         Optional<Cartao> resultado = service.updateCartao(idCiclista, CiclistaExemplos.MEIOPAGAMENTO_DTO);
@@ -47,20 +47,20 @@ class CartaoServiceTest {
                      "O número do cartão deve ser o novo valor do DTO.");
         
         verify(repository, times(1)).save(any(Cartao.class));
-        verify(repository, times(1)).findByIdCiclista(idCiclista);
+        verify(repository, times(1)).findByCiclistaId(idCiclista);
     }
     
     @Test
     void deveRetornarOptionalVazioQuandoCartaoNaoExiste() {
     	long idCiclista = 1L;
         
-        when(repository.findByIdCiclista(idCiclista)).thenReturn(Optional.empty());
+        when(repository.findByCiclistaId(idCiclista)).thenReturn(Optional.empty());
 
         Optional<Cartao> resultado = service.updateCartao(idCiclista, CiclistaExemplos.MEIOPAGAMENTO_DTO);
 
         assertFalse(resultado.isPresent(), "O resultado deve ser Optional.empty().");
         
-        verify(repository, times(1)).findByIdCiclista(idCiclista);
+        verify(repository, times(1)).findByCiclistaId(idCiclista);
         verify(repository, times(0)).save(any(Cartao.class));
     }
 }
