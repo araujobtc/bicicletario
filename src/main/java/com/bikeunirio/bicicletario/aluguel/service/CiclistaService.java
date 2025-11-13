@@ -17,7 +17,10 @@ import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
 public class CiclistaService {
 
 	CiclistaRepository ciclistaRepository;
-	
+
+	public CiclistaService(CiclistaRepository ciclistaRepository) {
+		this.ciclistaRepository = ciclistaRepository;
+	}
 
 	public boolean existsByEmail(String email) {
 		return ciclistaRepository.existsByEmail(email);

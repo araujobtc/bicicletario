@@ -16,6 +16,10 @@ import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
 public class FuncionarioService {
 
 	FuncionarioRepository funcionarioRepository;
+	
+	public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+		this.funcionarioRepository = funcionarioRepository;
+	}
 
 	/**/
 

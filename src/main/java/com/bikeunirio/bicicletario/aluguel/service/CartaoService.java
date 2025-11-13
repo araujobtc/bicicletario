@@ -13,6 +13,10 @@ import com.bikeunirio.bicicletario.aluguel.repository.CartaoRepository;
 public class CartaoService {
 
 	CartaoRepository repository;
+	
+	public CartaoService(CartaoRepository repository) {
+		this.repository = repository;
+	}
 
 	public Optional<Cartao> updateCartao(long idCiclista, MeioDePagamentoDTO meioDePagamentoDTO) {
 		return repository.findByCiclistaId(idCiclista).map(cartao -> {
