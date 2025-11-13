@@ -1,5 +1,9 @@
 package com.bikeunirio.bicicletario.aluguel.dto;
 
+import com.bikeunirio.bicicletario.aluguel.enums.FuncoesFuncionario;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +20,8 @@ public class FuncionarioDTO {
 	private Integer idade;
 
 	@NotBlank(message = "A função é obrigatória")
-	private String funcao;
+    @Enumerated(EnumType.STRING)
+	private FuncoesFuncionario funcao;
 
 	@NotBlank(message = "O CPF é obrigatório")
 	@Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos")
@@ -48,11 +53,11 @@ public class FuncionarioDTO {
 		this.idade = idade;
 	}
 
-	public String getFuncao() {
+	public FuncoesFuncionario getFuncao() {
 		return funcao;
 	}
 
-	public void setFuncao(String funcao) {
+	public void setFuncao(FuncoesFuncionario funcao) {
 		this.funcao = funcao;
 	}
 

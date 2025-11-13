@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bikeunirio.bicicletario.aluguel.entity.Funcionario;
 import com.bikeunirio.bicicletario.aluguel.enums.FuncionarioExemplos;
+import com.bikeunirio.bicicletario.aluguel.enums.FuncoesFuncionario;
 import com.bikeunirio.bicicletario.aluguel.repository.FuncionarioRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +41,7 @@ class FuncionarioServiceTest {
 
 		assertThat(resultado).hasSize(1);
 		assertThat(resultado.get(0).getNome()).isEqualTo("Isabelle");
+		assertThat(resultado.get(0).getFuncao()).isEqualTo(FuncoesFuncionario.ADMINISTRATIVO);
 
 		verify(repository, times(1)).findAll();
 	}

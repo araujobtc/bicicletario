@@ -2,9 +2,10 @@ package com.bikeunirio.bicicletario.aluguel.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +25,7 @@ import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
+import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
@@ -41,26 +42,71 @@ class CiclistaControllerTest {
 	private ExternoService externoService;
 
     // POST ciclista
-    @Test
-    void deveRetornarStatus201ECorpoCiclistaAoCadastrarComSucesso() {
-        when(service.createCiclista(any(CiclistaDTO.class))).thenReturn(CiclistaExemplos.CICLISTA);
-        when(service.existsByEmail(any(String.class))).thenReturn(false);
-        
-		when(externoService.isCartaoInvalido(Mockito.any(MeioDePagamentoDTO.class))).thenReturn(false);
-		when(externoService.enviarEmail(Mockito.any(String.class), Mockito.any(String.class))).thenReturn(true);
 
-        ResponseEntity<?> response = controller.createCiclista(CiclistaExemplos.CICLISTA_DTO);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode(), 
-                     "O status HTTP deve ser 201 CREATED para criação de recurso.");
-        
-        assertNotNull(response.getBody(), "O corpo da resposta não deve ser nulo.");
-        assertEquals(CiclistaExemplos.CICLISTA, response.getBody(), 
-                     "O corpo da resposta deve ser a entidade Ciclista retornada pelo Service.");
-        
-        verify(service, times(1)).createCiclista(any(CiclistaDTO.class));
-    }
+	private CiclistaDTO createBaseCiclistaDTO() {
+	    CiclistaDTO dto = new CiclistaDTO();
+	    
+        dto = new CiclistaDTO();
+        dto.setNome("Isabelle Araujo");
+        dto.setEmail("isa@exemplo.com");
+        dto.setCpf("12345678901");
+        dto.setNacionalidade(Nacionalidades.BRASILEIRO);
+        dto.setSenha("senha123");
+        dto.setUrlFotoDocumento("foto.png");
+        dto.setNascimento(java.time.LocalDate.of(2000, 1, 1));
+        dto.setMeioDePagamento(new MeioDePagamentoDTO());
+	    
+	    return dto;
+	}
     
+    @Test
+    void deveCobrirTodosOsCaminhosPossiveis() {
+    	CiclistaDTO dto = createBaseCiclistaDTO();
+    	
+        when(service.existsByEmail(anyString())).thenReturn(true);
+        ResponseEntity<Object> r1 = controller.createCiclista(dto);
+        assertThat(r1.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        when(service.existsByEmail(anyString())).thenReturn(false);
+        dto.setCpf(null);
+        ResponseEntity<Object> r2 = controller.createCiclista(dto);
+        assertThat(r2.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        dto.setCpf(null);
+        dto.setNacionalidade(Nacionalidades.ESTRANGEIRO);
+        dto.setPassaporte(null);
+        ResponseEntity<Object> r3 = controller.createCiclista(dto);
+        assertThat(r3.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        dto.setNacionalidade(Nacionalidades.BRASILEIRO);
+        dto.setCpf("12345678901");
+        dto.setMeioDePagamento(null);
+        ResponseEntity<Object> r4 = controller.createCiclista(dto);
+        assertThat(r4.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        dto.setMeioDePagamento(new MeioDePagamentoDTO());
+        when(externoService.isCartaoInvalido(any())).thenReturn(true);
+        ResponseEntity<Object> r5 = controller.createCiclista(dto);
+        assertThat(r5.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("isa@exemplo.com");
+        
+        when(externoService.isCartaoInvalido(any())).thenReturn(false);
+        when(service.createCiclista(any())).thenReturn(ciclista);
+        when(externoService.enviarEmail(anyString(), anyString())).thenReturn(false);
+        ResponseEntity<Object> r6 = controller.createCiclista(dto);
+        assertThat(r6.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        when(externoService.enviarEmail(anyString(), anyString())).thenReturn(true);
+        ResponseEntity<Object> r7 = controller.createCiclista(dto);
+        assertThat(r7.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(r7.getHeaders().containsKey("X-Success-Message")).isTrue();
+
+        verify(service, atLeastOnce()).existsByEmail(anyString());
+        verify(service, atLeastOnce()).createCiclista(any());
+    }
+
     // GET ciclista
     @Test
     void deveRetornarStatus200EACiclistaQuandoEncontrado() {
@@ -116,15 +162,29 @@ class CiclistaControllerTest {
     //
     
     // GET existeEmail
+
     @Test
-    void deveRetornarStatus200ETrueQuandoEmailCadastrado() {
-        String emailValido = "teste@exemplo.com.br";
-        when(service.existsByEmail(emailValido)).thenReturn(true);
+    void deveCobrirTodosOsCaminhosDeIsEmailCadastrado() {
+        ResponseEntity<Object> r1 = controller.isEmailCadastrado(null);
+        assertThat(r1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
-        boolean response = service.existsByEmail(emailValido);
+        ResponseEntity<Object> r2 = controller.isEmailCadastrado("");
+        assertThat(r2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
-        assertEquals(true, response, "O valor deve ser TRUE.");
-        verify(service, times(1)).existsByEmail(emailValido);
+        ResponseEntity<Object> r3 = controller.isEmailCadastrado("invalido@");
+        assertThat(r3.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+
+        when(service.existsByEmail("isa@exemplo.com")).thenReturn(false);
+        ResponseEntity<Object> r4 = controller.isEmailCadastrado("isa@exemplo.com");
+        assertThat(r4.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(r4.getBody()).isEqualTo(false);
+
+        when(service.existsByEmail("ja@exemplo.com")).thenReturn(true);
+        ResponseEntity<Object> r5 = controller.isEmailCadastrado("ja@exemplo.com");
+        assertThat(r5.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(r5.getBody()).isEqualTo(true);
+
+        verify(service, times(2)).existsByEmail(anyString());
     }
     
 }
