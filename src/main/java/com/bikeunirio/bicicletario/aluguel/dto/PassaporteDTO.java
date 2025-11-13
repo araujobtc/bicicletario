@@ -20,23 +20,12 @@ public class PassaporteDTO {
 		return numero;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
-
 	public LocalDate getValidade() {
 		return validade;
-	}
-
-	public void setValidade(LocalDate validade) {
-		this.validade = validade;
 	}
 
 	public String getPais() {
 		return pais;
 	}
 
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
 }

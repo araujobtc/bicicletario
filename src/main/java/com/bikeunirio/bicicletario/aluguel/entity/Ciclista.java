@@ -64,10 +64,10 @@ public class Ciclista {
     public String getCpf() {
         return cpf;
     }
-
+    
     public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+		this.cpf = cpf;
+	}
 
     public Nacionalidades getNacionalidade() {
         return nacionalidade;
@@ -104,12 +104,12 @@ public class Ciclista {
     public Passaporte getPassaporte() {
         return passaporte;
     }
+    
+	public void setPassaporte(Passaporte passaporte) {
+		this.passaporte = passaporte;
+	}
 
-    public void setPassaporte(Passaporte passaporte) {
-        this.passaporte = passaporte;
-    }
-
-    public Cartao getCartao() {
+	public Cartao getCartao() {
         return cartao;
     }
 
