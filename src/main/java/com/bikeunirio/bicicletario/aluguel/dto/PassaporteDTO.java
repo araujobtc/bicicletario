@@ -4,7 +4,9 @@ import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class PassaporteDTO {
 
 	@NotBlank(message = "O número do passaporte é obrigatório")
@@ -20,23 +22,4 @@ public class PassaporteDTO {
 		return numero;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
-
-	public LocalDate getValidade() {
-		return validade;
-	}
-
-	public void setValidade(LocalDate validade) {
-		this.validade = validade;
-	}
-
-	public String getPais() {
-		return pais;
-	}
-
-	public void setPais(String pais) {
-		this.pais = pais;
-	}
 }

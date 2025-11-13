@@ -9,7 +9,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
+@Data
 public class FuncionarioDTO {
 
 	@NotBlank(message = "O nome é obrigatório")
@@ -20,7 +22,7 @@ public class FuncionarioDTO {
 	private Integer idade;
 
 	@NotBlank(message = "A função é obrigatória")
-    @Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	private FuncoesFuncionario funcao;
 
 	@NotBlank(message = "O CPF é obrigatório")
@@ -37,59 +39,4 @@ public class FuncionarioDTO {
 	@NotBlank(message = "A confirmação de senha é obrigatória")
 	private String confirmacaoSenha;
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public Integer getIdade() {
-		return idade;
-	}
-
-	public void setIdade(Integer idade) {
-		this.idade = idade;
-	}
-
-	public FuncoesFuncionario getFuncao() {
-		return funcao;
-	}
-
-	public void setFuncao(FuncoesFuncionario funcao) {
-		this.funcao = funcao;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public String getConfirmacaoSenha() {
-		return confirmacaoSenha;
-	}
-
-	public void setConfirmacaoSenha(String confirmacaoSenha) {
-		this.confirmacaoSenha = confirmacaoSenha;
-	}
 }

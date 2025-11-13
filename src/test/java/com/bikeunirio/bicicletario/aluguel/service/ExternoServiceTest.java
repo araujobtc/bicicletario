@@ -12,7 +12,7 @@ import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @ExtendWith(MockitoExtension.class)
-public class ExternoServiceTest {
+class ExternoServiceTest {
 
     @InjectMocks
     private ExternoService externoService; 

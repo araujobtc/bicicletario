@@ -13,7 +13,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
+@Data
 public class CiclistaDTO {
 
 	@NotBlank(message = "O nome é obrigatório")
@@ -47,75 +49,4 @@ public class CiclistaDTO {
 	@Valid
 	private MeioDePagamentoDTO meioDePagamento;
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public LocalDate getNascimento() {
-		return nascimento;
-	}
-
-	public void setNascimento(LocalDate nascimento) {
-		this.nascimento = nascimento;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public Nacionalidades getNacionalidade() {
-		return nacionalidade;
-	}
-
-	public void setNacionalidade(Nacionalidades nacionalidade) {
-		this.nacionalidade = nacionalidade;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getUrlFotoDocumento() {
-		return urlFotoDocumento;
-	}
-
-	public void setUrlFotoDocumento(String urlFotoDocumento) {
-		this.urlFotoDocumento = urlFotoDocumento;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public PassaporteDTO getPassaporte() {
-		return passaporte;
-	}
-
-	public void setPassaporte(PassaporteDTO passaporte) {
-		this.passaporte = passaporte;
-	}
-
-	public MeioDePagamentoDTO getMeioDePagamento() {
-		return meioDePagamento;
-	}
-
-	public void setMeioDePagamento(MeioDePagamentoDTO meioDePagamento) {
-		this.meioDePagamento = meioDePagamento;
-	}
 }
