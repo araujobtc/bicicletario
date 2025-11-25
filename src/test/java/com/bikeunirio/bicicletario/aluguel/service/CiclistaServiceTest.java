@@ -45,7 +45,6 @@ class CiclistaServiceTest {
         assertEquals("12345678901", resultado.getCpf());
         assertNotNull(resultado.getPassaporte());
         assertNotNull(resultado.getCartao());
-        assertEquals(resultado, resultado.getCartao().getCiclista()); // valida relacionamento bilateral
         verify(repository, times(1)).save(any(Ciclista.class));
     }
     

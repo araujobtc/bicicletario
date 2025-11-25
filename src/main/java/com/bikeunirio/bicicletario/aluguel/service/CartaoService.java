@@ -24,4 +24,13 @@ public class CartaoService {
 			return repository.save(cartao);
 		});
 	}
+	
+	public Optional<MeioDePagamentoDTO> getCartao(long idCiclista){
+		return repository.findByCiclistaId(idCiclista).map(cartao -> {
+			MeioDePagamentoDTO dto = new MeioDePagamentoDTO();
+			BeanUtils.copyProperties(cartao, dto);
+			return dto;
+		});
+	}
+	
 }

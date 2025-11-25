@@ -2,6 +2,8 @@ package com.bikeunirio.bicicletario.aluguel.entity;
 
 import java.time.LocalDate;
 
+import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -100,11 +102,16 @@ public class Ciclista {
     
 	public void setPassaporte(Passaporte passaporte) {
 		this.passaporte = passaporte;
+	}	
+	
+	public MeioDePagamentoDTO getCartao() {
+	    MeioDePagamentoDTO dto = new MeioDePagamentoDTO();
+	    dto.setNomeTitular(this.cartao.getNomeTitular());
+	    dto.setNumero(this.cartao.getNumero());
+	    dto.setValidade(this.cartao.getValidade());
+	    dto.setCvv(this.cartao.getCvv());
+	    return dto;
 	}
-
-	public Cartao getCartao() {
-        return cartao;
-    }
 
     public void setCartao(Cartao cartao) {
         this.cartao = cartao;

@@ -2,7 +2,6 @@ package com.bikeunirio.bicicletario.aluguel.dto;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +24,6 @@ public class CiclistaDTO {
 	private String cpf;
 
 	@NotBlank(message = "A nacionalidade é obrigatória")
-    @Column(nullable = false)
 	private String nacionalidade;
 
 	@Email(message = "E-mail inválido")

@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Cartao;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.repository.CartaoRepository;
@@ -67,4 +68,28 @@ class CartaoServiceTest {
         verify(repository, times(1)).findByCiclistaId(idCiclista);
         verify(repository, times(0)).save(any(Cartao.class));
     }
+    
+    // GET cartao
+    
+    @Test
+    void deveRetornarDTOQuandoCartaoEncontrado() {
+        long idCiclista = 1L;
+
+        Cartao cartao = CiclistaExemplos.CARTAO;
+
+        when(repository.findByCiclistaId(idCiclista))
+                .thenReturn(Optional.of(cartao));
+
+        Optional<MeioDePagamentoDTO> resultado = service.getCartao(idCiclista);
+
+        assertTrue(resultado.isPresent());
+
+        MeioDePagamentoDTO dto = resultado.get();
+
+        assertEquals(cartao.getNomeTitular(), dto.getNomeTitular());
+        assertEquals(cartao.getNumero(), dto.getNumero());
+        assertEquals(cartao.getValidade(), dto.getValidade());
+        assertEquals(cartao.getCvv(), dto.getCvv());
+    }
+
 }

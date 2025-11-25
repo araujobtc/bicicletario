@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +57,18 @@ public class CartaoController {
 			return GlobalExceptionHandler.createdWithWarning(ciclista, mensagem, HttpStatus.CREATED); // 201
 		}
 
-		return ResponseEntity.ok(resultado.get());
+		return ResponseEntity.ok("Dados atualizados");
     }
+
+	@GetMapping("/{idCiclista}")
+	public ResponseEntity<Object> readCartao(@PathVariable Long idCiclista){
+		// optei por utilizar o dto que já tenho, como consequencia nao apresento o id
+		Optional<MeioDePagamentoDTO> response = cartaoService.getCartao(idCiclista);
+		
+		if(response.isEmpty()) {
+			return GlobalExceptionHandler.notFound("Cartão não encontrado.");
+		}
+		
+		return ResponseEntity.ok(response.get());
+	}
 }

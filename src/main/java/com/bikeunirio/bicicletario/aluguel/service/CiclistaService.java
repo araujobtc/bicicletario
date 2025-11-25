@@ -25,7 +25,7 @@ public class CiclistaService {
 	public boolean existsByEmail(String email) {
 		return ciclistaRepository.existsByEmail(email);
 	}
-	
+		
 	/**/
 
     public Ciclista createCiclista(CiclistaDTO ciclistaDTO) {
