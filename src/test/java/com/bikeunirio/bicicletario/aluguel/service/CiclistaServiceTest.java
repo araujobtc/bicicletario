@@ -1,6 +1,5 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,7 +36,7 @@ class CiclistaServiceTest {
 
 	@Mock
 	private CiclistaRepository repository; // Mocka o Repository
-	
+
 	@Mock
 	private AluguelService aluguelService;
 
@@ -94,12 +93,12 @@ class CiclistaServiceTest {
 
 		Optional<Ciclista> resultado = service.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
 
-		assertThat(resultado).isPresent();
-		assertThat(resultado.get().getNome()).isEqualTo("Isabelle Araujo");
-		assertThat(resultado.get().getEmail()).isEqualTo("isa@exemplo.com");
-		assertThat(resultado.get().getCpf()).isEqualTo("12345678901");
-		assertThat(resultado.get().getNacionalidade()).isEqualTo(Nacionalidades.BRASILEIRO.getValor());
-		assertThat(resultado.get().getUrlFotoDocumento()).isEqualTo("http://exemplo.com/doc.jpg");
+		assertTrue(resultado.isPresent());
+		assertEquals("Isabelle Araujo", resultado.get().getNome());
+		assertEquals("isa@exemplo.com", resultado.get().getEmail());
+		assertEquals("12345678901", resultado.get().getCpf());
+		assertEquals(Nacionalidades.BRASILEIRO.getValor(), resultado.get().getNacionalidade());
+		assertEquals("http://exemplo.com/doc.jpg", resultado.get().getUrlFotoDocumento());
 
 		verify(repository, times(1)).save(any(Ciclista.class));
 	}
@@ -112,7 +111,7 @@ class CiclistaServiceTest {
 
 		Optional<Ciclista> resultado = service.updateCiclista(id, CiclistaExemplos.CICLISTA_DTO);
 
-		assertThat(resultado).isNotPresent();
+		assertFalse(resultado.isPresent());
 
 		verify(repository, never()).save(any(Ciclista.class));
 	}
@@ -146,89 +145,85 @@ class CiclistaServiceTest {
 		verify(repository).findById(idCiclista);
 		verify(repository).save(ciclista);
 	}
-	
+
 	// aluguel ativo
-	
+
 	@Test
 	void deveRetornarTrueSeCiclistaNaoTemAluguelAtivo() {
-	    Long idCiclista = 1L;
+		Long idCiclista = 1L;
 
-	    // Ciclista não tem aluguel ativo
-	    when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
+		// Ciclista não tem aluguel ativo
+		when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
 
-	    boolean resultado = service.temPermissaoAluguel(idCiclista);
+		boolean resultado = service.temPermissaoAluguel(idCiclista);
 
-	    assertTrue(resultado);
-	    verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
+		assertTrue(resultado);
+		verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
 	}
 
 	@Test
 	void deveRetornarFalseSeCiclistaTemAluguelAtivo() {
-	    Long idCiclista = 1L;
+		Long idCiclista = 1L;
 
-	    // Ciclista tem aluguel ativo
-	    when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(true);
+		// Ciclista tem aluguel ativo
+		when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(true);
 
-	    boolean resultado = service.temPermissaoAluguel(idCiclista);
+		boolean resultado = service.temPermissaoAluguel(idCiclista);
 
-	    assertFalse(resultado);
-	    verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
+		assertFalse(resultado);
+		verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
 	}
 
 	// bicicleta alugada
-	
+
 	@Test
 	void deveRetornarBicicletaAlugadaSeExistir() {
-	    Long idCiclista = 1L;
-	    BicicletaDTO bicicletaDTO = new BicicletaDTO();
-	    bicicletaDTO.setId(10L);
+		Long idCiclista = 1L;
+		BicicletaDTO bicicletaDTO = new BicicletaDTO();
+		bicicletaDTO.setId(10L);
 
-	    when(aluguelService.getBicicletaPorIdCiclista(idCiclista))
-	        .thenReturn(Optional.of(bicicletaDTO));
+		when(aluguelService.getBicicletaPorIdCiclista(idCiclista)).thenReturn(Optional.of(bicicletaDTO));
 
-	    Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
+		Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
 
-	    assertTrue(resultado.isPresent());
-	    assertEquals(bicicletaDTO, resultado.get());
-	    verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
+		assertTrue(resultado.isPresent());
+		assertEquals(bicicletaDTO, resultado.get());
+		verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
 	}
 
 	@Test
 	void deveRetornarOptionalVazioSeNaoExistirBicicletaAlugada() {
-	    Long idCiclista = 1L;
+		Long idCiclista = 1L;
 
-	    when(aluguelService.getBicicletaPorIdCiclista(idCiclista))
-	        .thenReturn(Optional.empty());
+		when(aluguelService.getBicicletaPorIdCiclista(idCiclista)).thenReturn(Optional.empty());
 
-	    Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
+		Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
 
-	    assertTrue(resultado.isEmpty());
-	    verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
+		assertTrue(resultado.isEmpty());
+		verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
 	}
-
 
 	// codes
-	
+
 	@Test
 	void deveValidarCodigoCorretoDoCiclista() throws Exception {
-	    Ciclista ciclista = new Ciclista();
-	    
-	    Field idField = Ciclista.class.getDeclaredField("id");
-	    idField.setAccessible(true);
-	    idField.set(ciclista, 1L);
+		Ciclista ciclista = new Ciclista();
 
-	    ciclista.setCpf("12345678901");
-	    ciclista.setNascimento(LocalDate.of(1990, 5, 20));
+		Field idField = Ciclista.class.getDeclaredField("id");
+		idField.setAccessible(true);
+		idField.set(ciclista, 1L);
 
-	    Long codigoGerado = Long.parseLong(service.gerarCodigo(ciclista).toString());
+		ciclista.setCpf("12345678901");
+		ciclista.setNascimento(LocalDate.of(1990, 5, 20));
 
-	    assertTrue(service.isCodigoValido(codigoGerado, ciclista));
-	    assertFalse(service.isCodigoValido(codigoGerado + 1, ciclista));
+		Long codigoGerado = Long.parseLong(service.gerarCodigo(ciclista).toString());
 
-	    assertFalse(service.isCodigoValido(null, ciclista));
+		assertTrue(service.isCodigoValido(codigoGerado, ciclista));
+		assertFalse(service.isCodigoValido(codigoGerado + 1, ciclista));
+
+		assertFalse(service.isCodigoValido(null, ciclista));
 	}
 
-	
 	@Test
 	void deveGerarCodigoParaCiclista() throws Exception {
 		Ciclista ciclista = new Ciclista();

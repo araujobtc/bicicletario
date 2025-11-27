@@ -1,8 +1,12 @@
 package com.bikeunirio.bicicletario.aluguel.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -48,10 +51,10 @@ public class Aluguel {
 
     @Column(name = "data_fim")
     private LocalDateTime dataFim;
-
-    @NotNull(message = "O valor é obrigatório")
-    @Min(value = 0, message = "O valor deve ser positivo")
-    @Column(nullable = false)
-    private Double cobranca;
+    
+    @ElementCollection
+    @CollectionTable(name = "aluguel_cobrancas", joinColumns = @JoinColumn(name = "aluguel_id"))
+    @Column(name = "cobranca_id")
+    private List<Long> cobrancas = new ArrayList<>();
 
 }

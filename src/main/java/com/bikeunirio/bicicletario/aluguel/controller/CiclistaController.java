@@ -1,5 +1,6 @@
 package com.bikeunirio.bicicletario.aluguel.controller;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.http.HttpHeaders;
@@ -133,13 +134,13 @@ public class CiclistaController {
 		}
 
 		if (!ciclistaService.isCodigoValido(idRequisicao, ciclista)) {
-			return GlobalExceptionHandler.unprocessableEntity("");
+		    return GlobalExceptionHandler.unprocessableEntity("Código de ativação inválido para este ciclista.");
 		}
 
 		Optional<Ciclista> ciclistaAtivo =  ciclistaService.ativarCadastroCiclista(ciclista.getId());
 
 		if (ciclistaAtivo.isEmpty()) {
-			ResponseEntity.ok();
+		    return ResponseEntity.ok(Collections.emptyMap()); // retorna {}
 		}
 
 		return ResponseEntity.ok(ciclistaAtivo.get());

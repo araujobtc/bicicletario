@@ -25,4 +25,8 @@ public class EquipamentosService {
 		
 		return Optional.of(bicicleta);
 	}
+
+	public Optional<Long> getBicicleta(Long trancaInicio) {
+		return Optional.of(1L);
+	}
 }

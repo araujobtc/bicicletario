@@ -26,4 +26,8 @@ public class ExternoService {
         LOGGER.debug("Validação de cartão concluída. Cartão considerado válido.");
         return false;
     }
+
+	public Long realizarCobranca(Long id, double d) {
+		return 1L;
+	}
 }
