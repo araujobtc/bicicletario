@@ -24,9 +24,9 @@ public class CiclistaService {
 	
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternoService.class);
 
-	CiclistaRepository ciclistaRepository;
+    private CiclistaRepository ciclistaRepository;
 
-	AluguelService aluguelService;
+    private AluguelService aluguelService;
 
 	public CiclistaService(CiclistaRepository ciclistaRepository, AluguelService aluguelService) {
 		this.ciclistaRepository = ciclistaRepository;

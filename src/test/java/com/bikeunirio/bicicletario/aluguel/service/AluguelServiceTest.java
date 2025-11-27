@@ -38,7 +38,7 @@ public class AluguelServiceTest {
 	void deveRetornarVazioQuandoNaoExisteAluguelAtivo() {
 		Long idCiclista = 10L;
 
-		when(repository.findByCiclistaIdAndDataFimIsNull(idCiclista)).thenReturn(Optional.empty());
+		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.empty());
 
 		Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
 
@@ -58,7 +58,7 @@ public class AluguelServiceTest {
 		bicicletaDTO.setMarca("Caloi");
 		bicicletaDTO.setModelo("Elite");
 
-		when(repository.findByCiclistaIdAndDataFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
+		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
 		when(equipamentosService.getBicicletaPorId(5L)).thenReturn(Optional.of(bicicletaDTO));
 
 		Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
@@ -77,12 +77,12 @@ public class AluguelServiceTest {
 		Aluguel aluguel = new Aluguel();
 		aluguel.setId(100L);
 
-		when(repository.findByCiclistaIdAndDataFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
+		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
 
 		boolean resultado = service.isCiclistaComAluguelAtivo(idCiclista);
 
 		assertTrue(resultado);
-		verify(repository).findByCiclistaIdAndDataFimIsNull(idCiclista);
+		verify(repository).findByCiclistaIdAndHoraFimIsNull(idCiclista);
 	}
 
 }

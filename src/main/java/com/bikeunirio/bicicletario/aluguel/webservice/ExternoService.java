@@ -30,4 +30,8 @@ public class ExternoService {
 	public Long realizarCobranca(Long id, double d) {
 		return 1L;
 	}
+
+	public Long cobrar(Long ciclista, double valorExtra) {
+		return 2l;
+	}
 }

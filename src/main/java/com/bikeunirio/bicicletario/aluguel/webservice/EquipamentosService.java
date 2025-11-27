@@ -26,7 +26,19 @@ public class EquipamentosService {
 		return Optional.of(bicicleta);
 	}
 
-	public Optional<Long> getBicicleta(Long trancaInicio) {
+	public Optional<Long> getBicicletaPorIdTranca(Long idTranca) {
 		return Optional.of(1L);
+	}
+	
+	public boolean isTrancaDisponivel(Long idTranca) {
+		return true;
+	}
+
+	public boolean atualizarStatusBicicleta(Long idBicicleta, String string) {
+		return true;
+	}
+
+	public boolean atualizarStatusTranca(Long idTranca) {
+		return true;
 	}
 }

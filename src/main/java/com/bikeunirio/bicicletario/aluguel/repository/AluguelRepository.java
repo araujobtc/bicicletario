@@ -10,5 +10,8 @@ import com.bikeunirio.bicicletario.aluguel.entity.Aluguel;
 @Repository
 public interface AluguelRepository extends JpaRepository<Aluguel, Long> {
 
-    Optional<Aluguel> findByCiclistaIdAndDataFimIsNull(Long idCiclista);
+    Optional<Aluguel> findByCiclistaIdAndHoraFimIsNull(Long idCiclista);
+    
+    Optional<Aluguel> findByBicicletaIdAndHoraFimIsNull(Long bicicletaId);
+
 }
