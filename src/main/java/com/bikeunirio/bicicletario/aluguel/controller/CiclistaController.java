@@ -42,6 +42,8 @@ public class CiclistaController {
 		this.aluguelService = aluguelService;
 		this.externoService = externoService;
 	}
+	
+	private final String NOT_FOUND_CICLISTA = "Ciclista não encontrado";
 
 	// UC01
 	@PostMapping
@@ -94,7 +96,7 @@ public class CiclistaController {
 		if (ciclista.isPresent()) {
 			return ResponseEntity.ok(ciclista.get()); // 200
 		} else {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
 		}
 
 	}
@@ -108,7 +110,7 @@ public class CiclistaController {
 		Optional<Ciclista> atualizado = ciclistaService.updateCiclista(idCiclista, ciclistaDTO);
 
 		if (!atualizado.isPresent()) {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
 		}
 
 		Ciclista ciclista = atualizado.get();
@@ -128,7 +130,7 @@ public class CiclistaController {
 		Optional<Ciclista> response = ciclistaService.readCiclista(idCiclista);
 
 		if (response.isEmpty()) {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
 		}
 
 		Ciclista ciclista = response.get();
@@ -144,7 +146,7 @@ public class CiclistaController {
 		Optional<Ciclista> ciclistaAtivo =  ciclistaService.ativarCadastroCiclista(ciclista.getId());
 
 		if (ciclistaAtivo.isEmpty()) {
-		    return ResponseEntity.ok(Collections.emptyMap()); // retorna {}
+		    return ResponseEntity.ok(Collections.emptyMap());
 		}
 
 		return ResponseEntity.ok(ciclistaAtivo.get());
@@ -153,7 +155,7 @@ public class CiclistaController {
 	@GetMapping("/{idCiclista}/permiteAluguel")
 	public ResponseEntity<Object> temPermissaoAluguel(@PathVariable Long idCiclista) {
 		if (!ciclistaService.existsById(idCiclista)) {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
 		}
 
 		return ResponseEntity.ok(!aluguelService.isCiclistaComAluguelAtivo(idCiclista));
@@ -162,7 +164,7 @@ public class CiclistaController {
 	@GetMapping("/{idCiclista}/bicicletaAlugada")
 	public ResponseEntity<Object> getBicicletaAlugada(@PathVariable Long idCiclista) {
 		if (!ciclistaService.existsById(idCiclista)) {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
 		}
 
 		Optional<BicicletaDTO> response = aluguelService.getBicicletaPorIdCiclista(idCiclista);

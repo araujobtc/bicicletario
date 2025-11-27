@@ -16,12 +16,11 @@ import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.entity.Passaporte;
 import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
-import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @Service
 public class CiclistaService {
 	
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternoService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CiclistaService.class);
 
     private CiclistaRepository ciclistaRepository;
 
@@ -93,7 +92,7 @@ public class CiclistaService {
 			return true;
 		}
 
-        LOGGER.info("\n--------------------\n errou na verdade é "+ code.toString() + "\n------------------------\n");
+        LOGGER.info("\n errou na verdade é "+ code.toString() + "\n");
 		return false;
 	}
 

@@ -73,7 +73,5 @@ public class AluguelController {
 		return aluguelService.devolverBicicleta(idBicicleta, idTranca);
 	}
 
-	@PostMapping("/restaurarBanco")
-	public void restaurarBD() {
-	}
+	// restaurar banco nao foi desenvolvido
 }

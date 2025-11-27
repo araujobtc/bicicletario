@@ -48,13 +48,9 @@ public class AluguelService {
 	}
 
 	public boolean isCiclistaComAluguelAtivo(Long idCiclista) {
-		Optional<Aluguel> responseAluguel = aluguelRepository.findByCiclistaIdAndHoraFimIsNull(idCiclista);
-		if (responseAluguel.isEmpty()) {
-			return false;
-		}
-
-		return true;
+	    return aluguelRepository.findByCiclistaIdAndHoraFimIsNull(idCiclista).isPresent();
 	}
+
 
 	// alugar
 	public ResponseEntity<Object> alugarBicicleta(Long trancaInicio, Ciclista ciclista) {
@@ -98,10 +94,9 @@ public class AluguelService {
 	    aluguel.setTrancaFim(idTranca);
 
 	    long minutosUso = java.time.Duration.between(aluguel.getHoraInicio(), agora).toMinutes();
-	    double valorExtra = 0.0;
 	    if (minutosUso > 120) { // mais de 2 horas
 	        long meiaHorasExtras = (minutosUso - 120) / 30;
-	        valorExtra = meiaHorasExtras * 5.0; // R$ 5,00 por cada meia hora extra
+	        double valorExtra = meiaHorasExtras * 5.0; // R$ 5,00 por cada meia hora extra
 	        Long cobrancaId = externoService.cobrar(aluguel.getCiclista(), valorExtra);
 	        aluguel.getCobrancas().add(cobrancaId);
 	    }

@@ -27,7 +27,8 @@ public class ExternoService {
         return false;
     }
 
-	public Long realizarCobranca(Long id, double d) {
+	public Long realizarCobranca(Long id, double valor) {
+        LOGGER.info("📧 id: {}. valor: {}", id, valor);
 		return 1L;
 	}
 

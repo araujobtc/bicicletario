@@ -27,18 +27,18 @@ public class EquipamentosService {
 	}
 
 	public Optional<Long> getBicicletaPorIdTranca(Long idTranca) {
-		return Optional.of(1L);
+		return Optional.of(idTranca);
 	}
 	
 	public boolean isTrancaDisponivel(Long idTranca) {
-		return true;
+		return idTranca instanceof Long;
 	}
 
 	public boolean atualizarStatusBicicleta(Long idBicicleta, String string) {
-		return true;
+		return idBicicleta instanceof Long;
 	}
 
 	public boolean atualizarStatusTranca(Long idTranca) {
-		return true;
+		return idTranca instanceof Long;
 	}
 }
