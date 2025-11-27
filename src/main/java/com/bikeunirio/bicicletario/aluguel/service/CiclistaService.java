@@ -99,13 +99,13 @@ public class CiclistaService {
 	// cod
 
 	public boolean isCodigoValido(Long codeRequest, Ciclista ciclista) {
-        LOGGER.info("\n--------------------\n errou na verdade é "+ codeRequest.toString() + "\n------------------------\n");
 		Long code = Long.parseLong(gerarCodigo(ciclista).toString());
 
 		if (code.equals(codeRequest)) {
 			return true;
 		}
 
+        LOGGER.info("\n--------------------\n errou na verdade é "+ code.toString() + "\n------------------------\n");
 		return false;
 	}
 
