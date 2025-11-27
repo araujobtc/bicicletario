@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +18,12 @@ import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.entity.Passaporte;
 import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.repository.CiclistaRepository;
+import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @Service
 public class CiclistaService {
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternoService.class);
 
 	CiclistaRepository ciclistaRepository;
 
@@ -95,6 +100,7 @@ public class CiclistaService {
 	// cod
 
 	public boolean isCodigoValido(Long codeRequest, Ciclista ciclista) {
+        LOGGER.info("\n--------------------\n errou na verdade é "+ codeRequest.toString() + "\n------------------------\n");
 		Long code = Long.parseLong(gerarCodigo(ciclista).toString());
 
 		if (code.equals(codeRequest)) {
