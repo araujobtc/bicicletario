@@ -30,7 +30,7 @@ import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @ExtendWith(MockitoExtension.class)
-public class AluguelServiceTest {
+class AluguelServiceTest {
 
 	@InjectMocks
 	private AluguelService service;

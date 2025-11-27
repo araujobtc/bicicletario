@@ -42,8 +42,8 @@ public class CiclistaController {
 		this.aluguelService = aluguelService;
 		this.externoService = externoService;
 	}
-	
-	private final String NOT_FOUND_CICLISTA = "Ciclista não encontrado";
+
+	private String notFoundCiclista = "Ciclista não encontrado";
 
 	// UC01
 	@PostMapping
@@ -96,7 +96,7 @@ public class CiclistaController {
 		if (ciclista.isPresent()) {
 			return ResponseEntity.ok(ciclista.get()); // 200
 		} else {
-			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
+			return GlobalExceptionHandler.notFound(notFoundCiclista);
 		}
 
 	}
@@ -110,7 +110,7 @@ public class CiclistaController {
 		Optional<Ciclista> atualizado = ciclistaService.updateCiclista(idCiclista, ciclistaDTO);
 
 		if (!atualizado.isPresent()) {
-			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
+			return GlobalExceptionHandler.notFound(notFoundCiclista);
 		}
 
 		Ciclista ciclista = atualizado.get();
@@ -130,7 +130,7 @@ public class CiclistaController {
 		Optional<Ciclista> response = ciclistaService.readCiclista(idCiclista);
 
 		if (response.isEmpty()) {
-			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
+			return GlobalExceptionHandler.notFound(notFoundCiclista);
 		}
 
 		Ciclista ciclista = response.get();
@@ -155,7 +155,7 @@ public class CiclistaController {
 	@GetMapping("/{idCiclista}/permiteAluguel")
 	public ResponseEntity<Object> temPermissaoAluguel(@PathVariable Long idCiclista) {
 		if (!ciclistaService.existsById(idCiclista)) {
-			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
+			return GlobalExceptionHandler.notFound(notFoundCiclista);
 		}
 
 		return ResponseEntity.ok(!aluguelService.isCiclistaComAluguelAtivo(idCiclista));
@@ -164,7 +164,7 @@ public class CiclistaController {
 	@GetMapping("/{idCiclista}/bicicletaAlugada")
 	public ResponseEntity<Object> getBicicletaAlugada(@PathVariable Long idCiclista) {
 		if (!ciclistaService.existsById(idCiclista)) {
-			return GlobalExceptionHandler.notFound(NOT_FOUND_CICLISTA);
+			return GlobalExceptionHandler.notFound(notFoundCiclista);
 		}
 
 		Optional<BicicletaDTO> response = aluguelService.getBicicletaPorIdCiclista(idCiclista);

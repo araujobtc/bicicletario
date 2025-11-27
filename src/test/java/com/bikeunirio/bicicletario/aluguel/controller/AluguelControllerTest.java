@@ -25,7 +25,7 @@ import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
 
 @ExtendWith(MockitoExtension.class)
-public class AluguelControllerTest {
+class AluguelControllerTest {
 
 	@InjectMocks
 	private AluguelController controller;

@@ -16,7 +16,6 @@ import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
-import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 import jakarta.validation.Valid;
 
@@ -29,7 +28,7 @@ public class AluguelController {
 	private EquipamentosService equipamentosService;
 
 	public AluguelController(AluguelService aluguelService, CiclistaService ciclistaService,
-			EquipamentosService equipamentosService, ExternoService externoService) {
+			EquipamentosService equipamentosService) {
 		this.aluguelService = aluguelService;
 		this.ciclistaService = ciclistaService;
 		this.equipamentosService = equipamentosService;

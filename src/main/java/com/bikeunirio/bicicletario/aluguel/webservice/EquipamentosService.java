@@ -34,8 +34,8 @@ public class EquipamentosService {
 		return idTranca instanceof Long;
 	}
 
-	public boolean atualizarStatusBicicleta(Long idBicicleta, String string) {
-		return idBicicleta instanceof Long;
+	public boolean atualizarStatusBicicleta(Long idBicicleta, String status) {
+		return idBicicleta instanceof Long && status instanceof String;
 	}
 
 	public boolean atualizarStatusTranca(Long idTranca) {

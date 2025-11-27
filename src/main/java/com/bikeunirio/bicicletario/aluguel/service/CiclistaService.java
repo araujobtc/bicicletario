@@ -91,8 +91,8 @@ public class CiclistaService {
 		if (code.equals(codeRequest)) {
 			return true;
 		}
+		LOGGER.info("Errou, na verdade é {}", code);
 
-        LOGGER.info("\n errou na verdade é "+ code.toString() + "\n");
 		return false;
 	}
 
