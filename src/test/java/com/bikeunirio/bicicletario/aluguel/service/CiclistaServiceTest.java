@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
@@ -36,9 +35,6 @@ class CiclistaServiceTest {
 
 	@Mock
 	private CiclistaRepository repository; // Mocka o Repository
-
-	@Mock
-	private AluguelService aluguelService;
 
 	// POST ciclista
 	@Test
@@ -144,63 +140,6 @@ class CiclistaServiceTest {
 
 		verify(repository).findById(idCiclista);
 		verify(repository).save(ciclista);
-	}
-
-	// aluguel ativo
-
-	@Test
-	void deveRetornarTrueSeCiclistaNaoTemAluguelAtivo() {
-		Long idCiclista = 1L;
-
-		// Ciclista não tem aluguel ativo
-		when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
-
-		boolean resultado = service.temPermissaoAluguel(idCiclista);
-
-		assertTrue(resultado);
-		verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
-	}
-
-	@Test
-	void deveRetornarFalseSeCiclistaTemAluguelAtivo() {
-		Long idCiclista = 1L;
-
-		// Ciclista tem aluguel ativo
-		when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(true);
-
-		boolean resultado = service.temPermissaoAluguel(idCiclista);
-
-		assertFalse(resultado);
-		verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
-	}
-
-	// bicicleta alugada
-
-	@Test
-	void deveRetornarBicicletaAlugadaSeExistir() {
-		Long idCiclista = 1L;
-		BicicletaDTO bicicletaDTO = new BicicletaDTO();
-		bicicletaDTO.setId(10L);
-
-		when(aluguelService.getBicicletaPorIdCiclista(idCiclista)).thenReturn(Optional.of(bicicletaDTO));
-
-		Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
-
-		assertTrue(resultado.isPresent());
-		assertEquals(bicicletaDTO, resultado.get());
-		verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
-	}
-
-	@Test
-	void deveRetornarOptionalVazioSeNaoExistirBicicletaAlugada() {
-		Long idCiclista = 1L;
-
-		when(aluguelService.getBicicletaPorIdCiclista(idCiclista)).thenReturn(Optional.empty());
-
-		Optional<BicicletaDTO> resultado = service.getBicicletaAlugada(idCiclista);
-
-		assertTrue(resultado.isEmpty());
-		verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
 	}
 
 	// codes

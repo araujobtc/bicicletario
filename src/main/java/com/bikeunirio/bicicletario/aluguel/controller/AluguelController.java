@@ -27,14 +27,12 @@ public class AluguelController {
 	private AluguelService aluguelService;
 	private CiclistaService ciclistaService;
 	private EquipamentosService equipamentosService;
-	private ExternoService externoService;
 
 	public AluguelController(AluguelService aluguelService, CiclistaService ciclistaService,
 			EquipamentosService equipamentosService, ExternoService externoService) {
 		this.aluguelService = aluguelService;
 		this.ciclistaService = ciclistaService;
 		this.equipamentosService = equipamentosService;
-		this.externoService = externoService;
 	}
 
 	// UC16
@@ -55,7 +53,7 @@ public class AluguelController {
 			return GlobalExceptionHandler.unprocessableEntity("Ciclista não ativo para alugar bicicleta");
 		}
 
-		if (!ciclistaService.temPermissaoAluguel(idCiclista)) {
+		if (aluguelService.isCiclistaComAluguelAtivo(idCiclista)) {
 			return GlobalExceptionHandler.unprocessableEntity("Ciclista já possui um aluguel ativo");
 		}
 

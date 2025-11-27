@@ -29,6 +29,7 @@ import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.CiclistaExemplos;
 import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
+import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
@@ -40,6 +41,9 @@ class CiclistaControllerTest {
 
 	@Mock
 	private CiclistaService service; // Mocka o Service
+
+	@Mock
+	private AluguelService aluguelService;
 
 	@Mock
 	private ExternoService externoService;
@@ -167,14 +171,14 @@ class CiclistaControllerTest {
 
 		Ciclista ciclista = new Ciclista();
 		ciclista.setStatus("INATIVO"); // diferente de ATIVO
-		
-        try {
-    		Field idField = Ciclista.class.getDeclaredField("id");
-    		idField.setAccessible(true);
-    		idField.set(ciclista, idCiclista);
-        } catch (Exception e) {
-            fail("Falha ao setar o ID via reflection");
-        }
+
+		try {
+			Field idField = Ciclista.class.getDeclaredField("id");
+			idField.setAccessible(true);
+			idField.set(ciclista, idCiclista);
+		} catch (Exception e) {
+			fail("Falha ao setar o ID via reflection");
+		}
 
 		Ciclista ciclistaAtivo = new Ciclista();
 		ciclistaAtivo.setStatus("ATIVO");
@@ -200,7 +204,7 @@ class CiclistaControllerTest {
 		Long idCiclista = 1L;
 
 		when(service.existsById(idCiclista)).thenReturn(true);
-		when(service.temPermissaoAluguel(idCiclista)).thenReturn(true);
+		when(aluguelService.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
 
 		ResponseEntity<Object> response = controller.temPermissaoAluguel(idCiclista);
 
@@ -208,7 +212,7 @@ class CiclistaControllerTest {
 		assertEquals(true, response.getBody());
 
 		verify(service).existsById(idCiclista);
-		verify(service).temPermissaoAluguel(idCiclista);
+		verify(aluguelService).isCiclistaComAluguelAtivo(idCiclista);
 	}
 
 	// GET bicicleta
@@ -222,7 +226,7 @@ class CiclistaControllerTest {
 		bicicletaDTO.setModelo("Mountain Bike");
 
 		when(service.existsById(idCiclista)).thenReturn(true);
-		when(service.getBicicletaAlugada(idCiclista)).thenReturn(Optional.of(bicicletaDTO));
+		when(aluguelService.getBicicletaPorIdCiclista(idCiclista)).thenReturn(Optional.of(bicicletaDTO));
 
 		ResponseEntity<Object> response = controller.getBicicletaAlugada(idCiclista);
 
@@ -230,7 +234,7 @@ class CiclistaControllerTest {
 		assertEquals(bicicletaDTO, response.getBody());
 
 		verify(service).existsById(idCiclista);
-		verify(service).getBicicletaAlugada(idCiclista);
+		verify(aluguelService).getBicicletaPorIdCiclista(idCiclista);
 	}
 
 	// GET existeEmail

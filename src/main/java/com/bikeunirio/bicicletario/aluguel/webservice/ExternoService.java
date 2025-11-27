@@ -32,6 +32,6 @@ public class ExternoService {
 	}
 
 	public Long cobrar(Long ciclista, double valorExtra) {
-		return 2l;
+		return (long) (ciclista + valorExtra);
 	}
 }

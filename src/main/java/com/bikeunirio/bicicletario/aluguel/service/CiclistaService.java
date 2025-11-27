@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.PassaporteDTO;
@@ -26,11 +25,8 @@ public class CiclistaService {
 
     private CiclistaRepository ciclistaRepository;
 
-    private AluguelService aluguelService;
-
-	public CiclistaService(CiclistaRepository ciclistaRepository, AluguelService aluguelService) {
+	public CiclistaService(CiclistaRepository ciclistaRepository) {
 		this.ciclistaRepository = ciclistaRepository;
-		this.aluguelService = aluguelService;
 	}
 
 	public boolean existsByEmail(String email) {
@@ -86,14 +82,6 @@ public class CiclistaService {
 			ciclista.setDataConfirmacaoEmail(LocalDateTime.now());
 			return ciclistaRepository.save(ciclista);
 		});
-	}
-
-	public boolean temPermissaoAluguel(Long idCiclista) {
-		return !aluguelService.isCiclistaComAluguelAtivo(idCiclista);
-	}
-
-	public Optional<BicicletaDTO> getBicicletaAlugada(Long idCiclista) {
-		return aluguelService.getBicicletaPorIdCiclista(idCiclista);
 	}
 
 	// cod

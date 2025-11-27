@@ -12,7 +12,7 @@ import com.bikeunirio.bicicletario.aluguel.repository.CartaoRepository;
 @Service
 public class CartaoService {
 
-	CartaoRepository repository;
+	private CartaoRepository repository;
 	
 	public CartaoService(CartaoRepository repository) {
 		this.repository = repository;

@@ -19,13 +19,13 @@ import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 @Service
 public class AluguelService {
 
-	AluguelRepository aluguelRepository;
+	private AluguelRepository aluguelRepository;
 	
 	private CiclistaService ciclistaService;
 
-	EquipamentosService equipamentosService;
+	private EquipamentosService equipamentosService;
 	
-	ExternoService externoService;
+	private ExternoService externoService;
 
 	public AluguelService(AluguelRepository aluguelRepository, CiclistaService ciclistaService, ExternoService externoService, EquipamentosService equipamentosService) {
 		this.aluguelRepository = aluguelRepository;

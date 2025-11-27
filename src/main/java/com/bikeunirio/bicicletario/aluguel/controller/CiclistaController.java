@@ -21,6 +21,7 @@ import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
 import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
+import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
@@ -32,10 +33,13 @@ public class CiclistaController {
 
 	private CiclistaService ciclistaService;
 
+	private AluguelService aluguelService;
+	
 	private ExternoService externoService;
 
-	public CiclistaController(CiclistaService ciclistaService, ExternoService externoService) {
+	public CiclistaController(CiclistaService ciclistaService, AluguelService aluguelService, ExternoService externoService) {
 		this.ciclistaService = ciclistaService;
+		this.aluguelService = aluguelService;
 		this.externoService = externoService;
 	}
 
@@ -152,7 +156,7 @@ public class CiclistaController {
 			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
 		}
 
-		return ResponseEntity.ok(ciclistaService.temPermissaoAluguel(idCiclista));
+		return ResponseEntity.ok(!aluguelService.isCiclistaComAluguelAtivo(idCiclista));
 	}
 
 	@GetMapping("/{idCiclista}/bicicletaAlugada")
@@ -161,10 +165,10 @@ public class CiclistaController {
 			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
 		}
 
-		Optional<BicicletaDTO> response = ciclistaService.getBicicletaAlugada(idCiclista);
+		Optional<BicicletaDTO> response = aluguelService.getBicicletaPorIdCiclista(idCiclista);
 
 		if (response.isEmpty()) {
-			ResponseEntity.ok();
+	        return ResponseEntity.ok().build();
 		}
 
 		return ResponseEntity.ok(response.get());
