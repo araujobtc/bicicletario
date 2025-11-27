@@ -10,12 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.enums.Nacionalidades;
+import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
@@ -67,6 +70,7 @@ public class CiclistaController {
 		// COMENT: alterar na prox entrega
 		boolean isEmailEnviado = externoService.enviarEmail(ciclista.getEmail(), "cadastrado eeeeeeh!!!");
 		if (!isEmailEnviado) {
+			// gerarCodigo
 			String mensagem = "Ciclista cadastrado com sucesso, mas não foi possível enviar o e-mail de confirmação.";
 			return GlobalExceptionHandler.createdWithWarning(ciclista, mensagem, HttpStatus.CREATED); // 201
 		}
@@ -112,7 +116,59 @@ public class CiclistaController {
 		}
 		return ResponseEntity.ok(ciclista);
 	}
-	
+
+	@PostMapping("/{idCiclista}/ativar")
+	public ResponseEntity<Object> ativarCadastroCiclista(@PathVariable Long idCiclista,
+			@RequestHeader("X-Id-Requisicao") Long idRequisicao) {
+		Optional<Ciclista> response = ciclistaService.readCiclista(idCiclista);
+
+		if (response.isEmpty()) {
+			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+		}
+
+		Ciclista ciclista = response.get();
+
+		if (ciclista.getStatus().equals(StatusCiclista.ATIVO.getDescricao())) {
+			return GlobalExceptionHandler.unprocessableEntity("Ciclista já está ativo.");
+		}
+
+		if (!ciclistaService.isCodigoValido(idRequisicao, ciclista)) {
+			return GlobalExceptionHandler.unprocessableEntity("");
+		}
+
+		Optional<Ciclista> ciclistaAtivo =  ciclistaService.ativarCadastroCiclista(ciclista.getId());
+
+		if (ciclistaAtivo.isEmpty()) {
+			ResponseEntity.ok();
+		}
+
+		return ResponseEntity.ok(ciclistaAtivo.get());
+	}
+
+	@GetMapping("/{idCiclista}/permiteAluguel")
+	public ResponseEntity<Object> temPermissaoAluguel(@PathVariable Long idCiclista) {
+		if (!ciclistaService.existsById(idCiclista)) {
+			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+		}
+
+		return ResponseEntity.ok(ciclistaService.temPermissaoAluguel(idCiclista));
+	}
+
+	@GetMapping("/{idCiclista}/bicicletaAlugada")
+	public ResponseEntity<Object> getBicicletaAlugada(@PathVariable Long idCiclista) {
+		if (!ciclistaService.existsById(idCiclista)) {
+			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+		}
+
+		Optional<BicicletaDTO> response = ciclistaService.getBicicletaAlugada(idCiclista);
+
+		if (response.isEmpty()) {
+			ResponseEntity.ok();
+		}
+
+		return ResponseEntity.ok(response.get());
+	}
+
 	//
 
 	@GetMapping("/existeEmail/{email}")

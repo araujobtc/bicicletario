@@ -1,6 +1,7 @@
 package com.bikeunirio.bicicletario.aluguel.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ciclistas")
@@ -21,6 +23,9 @@ public class Ciclista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@NotNull(message = "O status é obrigatório")
+    private String status;
+	
     private String nome;
     private LocalDate nascimento;
     private String cpf;
@@ -35,12 +40,22 @@ public class Ciclista {
 
     @OneToOne(mappedBy = "ciclista", cascade = CascadeType.ALL)
     private Cartao cartao;
+    
+    private LocalDateTime dataConfirmacaoEmail;
 
     public Long getId() {
         return id;
     }
 
-    public String getNome() {
+    public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getNome() {
         return nome;
     }
 
@@ -116,4 +131,13 @@ public class Ciclista {
     public void setCartao(Cartao cartao) {
         this.cartao = cartao;
     }
+
+	public LocalDateTime getDataConfirmacaoEmail() {
+		return dataConfirmacaoEmail;
+	}
+
+	public void setDataConfirmacaoEmail(LocalDateTime dataConfirmacaoEmail) {
+		this.dataConfirmacaoEmail = dataConfirmacaoEmail;
+	}
+    
 }

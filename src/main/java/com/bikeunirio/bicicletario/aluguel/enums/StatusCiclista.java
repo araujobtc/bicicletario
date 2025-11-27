@@ -1,12 +1,12 @@
 package com.bikeunirio.bicicletario.aluguel.enums;
 
-public enum StatusAluguel {
+public enum StatusCiclista {
 
-	ATIVO("ativo"), FINALIZADO("finalizado"), CANCELADO("cancelado");
+	ATIVO("Ativo"), CADASTRADO("Cadastrado");
 
 	private final String descricao;
 
-	private StatusAluguel(String descricao) {
+	private StatusCiclista(String descricao) {
 		this.descricao = descricao;
 	}
 

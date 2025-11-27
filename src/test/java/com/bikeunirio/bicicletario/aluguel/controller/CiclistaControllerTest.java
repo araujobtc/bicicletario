@@ -2,6 +2,7 @@ package com.bikeunirio.bicicletario.aluguel.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.CiclistaDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.ErroResposta;
 import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
@@ -156,7 +159,79 @@ class CiclistaControllerTest {
 		assertThat(erro.getMensagem()).isEqualTo("Ciclista não encontrado");
 	}
 
-	//
+	// POST ativar
+	@Test
+	void deveAtivarCadastroCiclista_QuandoCiclistaExisteEIdRequisicaoValido() {
+		Long idCiclista = 1L;
+		Long idRequisicao = 12345L;
+
+		Ciclista ciclista = new Ciclista();
+		ciclista.setStatus("INATIVO"); // diferente de ATIVO
+		
+        try {
+    		Field idField = Ciclista.class.getDeclaredField("id");
+    		idField.setAccessible(true);
+    		idField.set(ciclista, idCiclista);
+        } catch (Exception e) {
+            fail("Falha ao setar o ID via reflection");
+        }
+
+		Ciclista ciclistaAtivo = new Ciclista();
+		ciclistaAtivo.setStatus("ATIVO");
+
+		when(service.readCiclista(idCiclista)).thenReturn(Optional.of(ciclista));
+		when(service.isCodigoValido(idRequisicao, ciclista)).thenReturn(true);
+		when(service.ativarCadastroCiclista(idCiclista)).thenReturn(Optional.of(ciclistaAtivo));
+
+		ResponseEntity<Object> response = controller.ativarCadastroCiclista(idCiclista, idRequisicao);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(ciclistaAtivo, response.getBody());
+
+		verify(service).readCiclista(idCiclista);
+		verify(service).isCodigoValido(idRequisicao, ciclista);
+		verify(service).ativarCadastroCiclista(idCiclista);
+	}
+
+	// GET permiteAluguel
+
+	@Test
+	void deveRetornarPermissaoQuandoCiclistaExiste() {
+		Long idCiclista = 1L;
+
+		when(service.existsById(idCiclista)).thenReturn(true);
+		when(service.temPermissaoAluguel(idCiclista)).thenReturn(true);
+
+		ResponseEntity<Object> response = controller.temPermissaoAluguel(idCiclista);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(true, response.getBody());
+
+		verify(service).existsById(idCiclista);
+		verify(service).temPermissaoAluguel(idCiclista);
+	}
+
+	// GET bicicleta
+
+	@Test
+	void deveRetornarBicicletaAlugada_QuandoCiclistaExisteEHaBicicleta() {
+		Long idCiclista = 1L;
+
+		BicicletaDTO bicicletaDTO = new BicicletaDTO();
+		bicicletaDTO.setId(10L);
+		bicicletaDTO.setModelo("Mountain Bike");
+
+		when(service.existsById(idCiclista)).thenReturn(true);
+		when(service.getBicicletaAlugada(idCiclista)).thenReturn(Optional.of(bicicletaDTO));
+
+		ResponseEntity<Object> response = controller.getBicicletaAlugada(idCiclista);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(bicicletaDTO, response.getBody());
+
+		verify(service).existsById(idCiclista);
+		verify(service).getBicicletaAlugada(idCiclista);
+	}
 
 	// GET existeEmail
 

@@ -2,7 +2,6 @@ package com.bikeunirio.bicicletario.aluguel.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -30,7 +28,6 @@ public class Aluguel {
     @NotNull(message = "O ciclista é obrigatório")
     @Valid
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-	// fetch = FetchType.LAZY: o ciclista só é carregado quando getCiclista() é chamado
     @JoinColumn(name = "ciclista_id")
     private Ciclista ciclista;
 
@@ -38,10 +35,12 @@ public class Aluguel {
     @Column(name = "bicicleta_id", nullable = false)
     private Long bicicletaId;
 
-    @Valid
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cartao_id")
-    private Cartao cartao;
+    @NotNull(message = "A tranca de início é obrigatória")
+    @Column(name = "tranca_inicio", nullable = false)
+    private Long trancaInicio;
+
+    @Column(name = "tranca_fim")
+    private Long trancaFim;
 
     @NotNull(message = "A data de início é obrigatória")
     @Column(name = "data_inicio", nullable = false)
@@ -53,10 +52,6 @@ public class Aluguel {
     @NotNull(message = "O valor é obrigatório")
     @Min(value = 0, message = "O valor deve ser positivo")
     @Column(nullable = false)
-    private Double valor;
-
-    @NotNull(message = "O status é obrigatório")
-    @Column(nullable = false)
-    private String status;
+    private Double cobranca;
 
 }

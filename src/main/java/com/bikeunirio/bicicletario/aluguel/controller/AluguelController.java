@@ -1,14 +1,24 @@
 package com.bikeunirio.bicicletario.aluguel.controller;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
+import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 
 @RestController
 @RequestMapping("/")
 public class AluguelController {
 	
-    //Este é o @Autowired private AluguelService aluguelService ;
+    private AluguelService aluguelService;	
+	private ExternoService externoService;
+    
+	public AluguelController(AluguelService aluguelService, ExternoService externoService) {
+		this.aluguelService = aluguelService;
+		this.externoService = externoService;
+	}
 
 	// UC16
 	/*
@@ -30,8 +40,14 @@ public class AluguelController {
 	 * de uso é encerrado
 	 */
     
-    // Caso de uso 03 @PostMapping("/aluguel")public void alugarBicicleta() {}
+    // Caso de uso 03
+	@PostMapping("/aluguel")
+	public void alugarBicicleta() {}
 
-	// Casos de uso UC04 e UC16 @PostMapping("/devolucao")//public void devolverBicicleta() {}
-	// mater apenas se apagar dados somente relacionado a aluguel @PostMapping("/restaurarBanco")public void restaurarBD() { }
+	// Casos de uso UC04 e UC16
+	@PostMapping("/devolucao")
+	public void devolverBicicleta() {}
+	
+	@PostMapping("/restaurarBanco")
+	public void restaurarBD() { }
 }
