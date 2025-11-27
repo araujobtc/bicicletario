@@ -1,7 +1,6 @@
 package com.bikeunirio.bicicletario.aluguel.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -116,7 +115,7 @@ public class CiclistaService {
 				+ (ciclista.getNascimento() != null ? ciclista.getNascimento().toString() : "");
 
 		// Calcula hashCode do String e converte para Integer positivo
-		int hash = Objects.hash(base);
+		int hash = base.hashCode();
 		return Math.abs(hash);
 	}
 }
