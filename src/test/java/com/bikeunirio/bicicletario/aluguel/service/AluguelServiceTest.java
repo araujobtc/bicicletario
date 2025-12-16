@@ -217,6 +217,7 @@ class AluguelServiceTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Devolucao devolucaoSalva = (Devolucao) response.getBody();
+
         assertNotNull(devolucaoSalva.getCobranca());
 
         verify(externoService).cobrar(ciclista.getId(), 10.0);

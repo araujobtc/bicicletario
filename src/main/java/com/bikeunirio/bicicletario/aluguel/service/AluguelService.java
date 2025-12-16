@@ -109,7 +109,7 @@ public class AluguelService {
             long meiaHorasExtras = (minutosUso - 120) / 30;
             double valorExtra = meiaHorasExtras * 5.0; // R$ 5,00 por cada meia hora extra
             Long cobrancaId = externoService.cobrar(aluguel.getCiclista(), valorExtra);
-            aluguel.setCobranca(cobrancaId);
+            devolucao.setCobranca(cobrancaId);
         } else {
             devolucao.setCobranca(null);
         }
