@@ -2,6 +2,7 @@ package com.bikeunirio.bicicletario.aluguel.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,199 +26,203 @@ import org.springframework.http.ResponseEntity;
 import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Aluguel;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
+import com.bikeunirio.bicicletario.aluguel.entity.Devolucao;
 import com.bikeunirio.bicicletario.aluguel.repository.AluguelRepository;
+import com.bikeunirio.bicicletario.aluguel.repository.DevolucaoRepository;
 import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
 import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 
 @ExtendWith(MockitoExtension.class)
 class AluguelServiceTest {
 
-	@InjectMocks
-	private AluguelService service;
+    @InjectMocks
+    private AluguelService service;
 
-	@Mock
-	private AluguelRepository repository;
+    @Mock
+    private AluguelRepository repository;
 
-	@Mock
-	private CiclistaService ciclistaService;
+    @Mock
+    private DevolucaoRepository devolucaoRepository;
 
-	@Mock
-	private EquipamentosService equipamentosService;
+    @Mock
+    private CiclistaService ciclistaService;
 
-	@Mock
-	private ExternoService externoService;
+    @Mock
+    private EquipamentosService equipamentosService;
 
-	// get bicicleta p/ idCiclista
+    @Mock
+    private ExternoService externoService;
 
-	@Test
-	void deveRetornarVazioQuandoNaoExisteAluguelAtivo() {
-		Long idCiclista = 10L;
+    // get bicicleta p/ idCiclista
 
-		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.empty());
+    @Test
+    void deveRetornarVazioQuandoNaoExisteAluguelAtivo() {
+        Long idCiclista = 10L;
 
-		Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
+        when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.empty());
 
-		assertTrue(resultado.isEmpty());
-		verify(equipamentosService, never()).getBicicletaPorId(any());
-	}
+        Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
 
-	@Test
-	void deveRetornarBicicletaQuandoAluguelAtivoExiste() {
-		Long idCiclista = 20L;
+        assertTrue(resultado.isEmpty());
+        verify(equipamentosService, never()).getBicicletaPorId(any());
+    }
 
-		Aluguel aluguel = new Aluguel();
-		aluguel.setBicicletaId(5L);
+    @Test
+    void deveRetornarBicicletaQuandoAluguelAtivoExiste() {
+        Long idCiclista = 20L;
 
-		BicicletaDTO bicicletaDTO = new BicicletaDTO();
-		bicicletaDTO.setId(5L);
-		bicicletaDTO.setMarca("Caloi");
-		bicicletaDTO.setModelo("Elite");
+        Aluguel aluguel = new Aluguel();
+        aluguel.setBicicletaId(5L);
 
-		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
-		when(equipamentosService.getBicicletaPorId(5L)).thenReturn(Optional.of(bicicletaDTO));
+        BicicletaDTO bicicletaDTO = new BicicletaDTO();
+        bicicletaDTO.setId(5L);
+        bicicletaDTO.setMarca("Caloi");
+        bicicletaDTO.setModelo("Elite");
 
-		Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
+        when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
+        when(equipamentosService.getBicicletaPorId(5L)).thenReturn(Optional.of(bicicletaDTO));
 
-		assertTrue(resultado.isPresent());
-		assertEquals(5L, resultado.get().getId());
+        Optional<BicicletaDTO> resultado = service.getBicicletaPorIdCiclista(idCiclista);
 
-		verify(equipamentosService).getBicicletaPorId(5L);
-	}
+        assertTrue(resultado.isPresent());
+        assertEquals(5L, resultado.get().getId());
 
-	// algum aluguel ativo
-	@Test
-	void deveRetornarTrueQuandoExisteAluguelAtivo() {
-		Long idCiclista = 1L;
+        verify(equipamentosService).getBicicletaPorId(5L);
+    }
 
-		Aluguel aluguel = new Aluguel();
-		aluguel.setId(100L);
+    // algum aluguel ativo
+    @Test
+    void deveRetornarTrueQuandoExisteAluguelAtivo() {
+        Long idCiclista = 1L;
 
-		when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
+        Aluguel aluguel = new Aluguel();
+        aluguel.setId(100L);
 
-		boolean resultado = service.isCiclistaComAluguelAtivo(idCiclista);
+        when(repository.findByCiclistaIdAndHoraFimIsNull(idCiclista)).thenReturn(Optional.of(aluguel));
 
-		assertTrue(resultado);
-		verify(repository).findByCiclistaIdAndHoraFimIsNull(idCiclista);
-	}
+        boolean resultado = service.isCiclistaComAluguelAtivo(idCiclista);
 
-	// alugar bicicleta
-	@Test
-	void deveAlugarBicicleta_comSucesso() {
-		Long trancaInicio = 5L;
-		Long bicicletaId = 99L;
-		Long idCobranca = 123L;
+        assertTrue(resultado);
+        verify(repository).findByCiclistaIdAndHoraFimIsNull(idCiclista);
+    }
 
-		Ciclista ciclista = new Ciclista();
-		ciclista.setEmail("email@test.com");
-		ciclista.setStatus("Ativo");
+    // alugar bicicleta
+    @Test
+    void deveAlugarBicicletaComSucesso() {
+        Long trancaInicio = 5L;
+        Long bicicletaId = 99L;
+        Long idCobranca = 123L;
 
-		try {
-			Field idField = Ciclista.class.getDeclaredField("id");
-			idField.setAccessible(true);
-			idField.set(ciclista, 1L);
-		} catch (Exception e) {
-			fail("Falha ao setar o ID via reflection");
-		}
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("email@test.com");
+        ciclista.setStatus("Ativo");
 
-		when(equipamentosService.getBicicletaPorIdTranca(trancaInicio)).thenReturn(Optional.of(bicicletaId));
+        try {
+            Field idField = Ciclista.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(ciclista, 1L);
+        } catch (Exception e) {
+            fail("Falha ao setar o ID via reflection");
+        }
 
-		when(externoService.realizarCobranca(ciclista.getId(), 10.0)).thenReturn(idCobranca);
+        when(equipamentosService.getBicicletaPorIdTranca(trancaInicio)).thenReturn(Optional.of(bicicletaId));
 
-		when(repository.save(Mockito.any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(externoService.realizarCobranca(ciclista.getId(), 10.0)).thenReturn(idCobranca);
 
-		ResponseEntity<Object> response = service.alugarBicicleta(trancaInicio, ciclista);
+        when(repository.save(Mockito.any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(Aluguel.class, response.getBody().getClass());
+        ResponseEntity<Object> response = service.alugarBicicleta(trancaInicio, ciclista);
 
-		Aluguel aluguelSalvo = (Aluguel) response.getBody();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Aluguel.class, response.getBody().getClass());
 
-		assertEquals(1L, aluguelSalvo.getCiclista());
-		assertEquals(bicicletaId, aluguelSalvo.getBicicletaId());
-		assertEquals(trancaInicio, aluguelSalvo.getTrancaInicio());
-		assertNotNull(aluguelSalvo.getHoraInicio());
+        Aluguel aluguelSalvo = (Aluguel) response.getBody();
 
-		assertEquals(1, aluguelSalvo.getCobrancas().size());
-		assertEquals(idCobranca, aluguelSalvo.getCobrancas().get(0));
+        assertEquals(1L, aluguelSalvo.getCiclista());
+        assertEquals(bicicletaId, aluguelSalvo.getBicicletaId());
+        assertEquals(trancaInicio, aluguelSalvo.getTrancaInicio());
+        assertEquals(idCobranca, aluguelSalvo.getCobranca());
+        assertNotNull(aluguelSalvo.getHoraInicio());
 
-		verify(externoService).realizarCobranca(ciclista.getId(), 10.0);
-		verify(externoService).enviarEmail("email@test.com", "ALUGOU eeeeeeh!!!");
-		verify(repository).save(Mockito.any(Aluguel.class));
-	}
+        verify(externoService).realizarCobranca(ciclista.getId(), 10.0);
+        verify(externoService).enviarEmail("email@test.com", "ALUGOU eeeeeeh!!!");
+        verify(repository).save(Mockito.any(Aluguel.class));
+    }
 
-	// devolver bicicleta
+    // devolver bicicleta
+    @Test
+    void deveDevolverBicicletaSemCobrancaExtra() {
+        Long bicicletaId = 1L;
+        Long trancaId = 2L;
 
-	@Test
-	void deveDevolverBicicleta_SemCobrancaExtra() {
-		Long bicicletaId = 1L;
-		Long trancaId = 2L;
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("email@test.com");
+        try {
+            Field idField = Ciclista.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(ciclista, 1L);
+        } catch (Exception e) {
+            fail("Falha ao setar o ID via reflection");
+        }
 
-		Ciclista ciclista = new Ciclista();
-		ciclista.setEmail("email@test.com");
-		try {
-			Field idField = Ciclista.class.getDeclaredField("id");
-			idField.setAccessible(true);
-			idField.set(ciclista, 1L);
-		} catch (Exception e) {
-			fail("Falha ao setar o ID via reflection");
-		}
+        Aluguel aluguel = new Aluguel();
+        aluguel.setBicicletaId(bicicletaId);
+        aluguel.setHoraInicio(LocalDateTime.now().minusMinutes(100));
+        aluguel.setCiclista(ciclista);
 
-		Aluguel aluguel = new Aluguel();
-		aluguel.setBicicletaId(bicicletaId);
-		aluguel.setHoraInicio(LocalDateTime.now().minusMinutes(100));
-		aluguel.setCiclista(ciclista);
+        when(repository.findByBicicletaIdAndHoraFimIsNull(bicicletaId)).thenReturn(Optional.of(aluguel));
+        when(repository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(devolucaoRepository.save(any(Devolucao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(ciclistaService.readCiclista(ciclista.getId())).thenReturn(Optional.of(ciclista));
 
-		when(repository.findByBicicletaIdAndHoraFimIsNull(bicicletaId)).thenReturn(Optional.of(aluguel));
-		when(repository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(ciclistaService.readCiclista(ciclista.getId())).thenReturn(Optional.of(ciclista));
+        ResponseEntity<Object> response = service.devolverBicicleta(bicicletaId, trancaId);
 
-		ResponseEntity<Object> response = service.devolverBicicleta(bicicletaId, trancaId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Devolucao devolucaoSalva = (Devolucao) response.getBody();
+        assertNotNull(devolucaoSalva.getHoraFim());
+        assertEquals(trancaId, devolucaoSalva.getTrancaFim());
+        assertNull(devolucaoSalva.getCobranca());
 
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		Aluguel resultado = (Aluguel) response.getBody();
-		assertNotNull(resultado.getHoraFim());
-		assertEquals(trancaId, resultado.getTrancaFim());
-		assertTrue(resultado.getCobrancas().isEmpty());
+        verify(equipamentosService).atualizarStatusBicicleta(bicicletaId, "DISPONIVEL");
+        verify(equipamentosService).atualizarStatusTranca(trancaId);
+    }
 
-		verify(equipamentosService).atualizarStatusBicicleta(bicicletaId, "DISPONIVEL");
-		verify(equipamentosService).atualizarStatusTranca(trancaId);
-	}
+    @Test
+    void deveDevolverBicicletaComCobrancaExtra() {
+        Long bicicletaId = 1L;
+        Long trancaId = 2L;
 
-	@Test
-	void deveDevolverBicicleta_ComCobrancaExtra() {
-		Long bicicletaId = 1L;
-		Long trancaId = 2L;
+        Ciclista ciclista = new Ciclista();
+        ciclista.setEmail("email@test.com");
+        try {
+            Field idField = Ciclista.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(ciclista, 1L);
+        } catch (Exception e) {
+            fail("Falha ao setar o ID via reflection");
+        }
 
-		Ciclista ciclista = new Ciclista();
-		ciclista.setEmail("email@test.com");
-		try {
-			Field idField = Ciclista.class.getDeclaredField("id");
-			idField.setAccessible(true);
-			idField.set(ciclista, 1L);
-		} catch (Exception e) {
-			fail("Falha ao setar o ID via reflection");
-		}
+        Aluguel aluguel = new Aluguel();
+        aluguel.setBicicletaId(bicicletaId);
+        aluguel.setHoraInicio(LocalDateTime.now().minusMinutes(200));
+        aluguel.setCiclista(ciclista);
 
-		Aluguel aluguel = new Aluguel();
-		aluguel.setBicicletaId(bicicletaId);
-		aluguel.setHoraInicio(LocalDateTime.now().minusMinutes(200));
-		aluguel.setCiclista(ciclista);
+        when(repository.findByBicicletaIdAndHoraFimIsNull(bicicletaId)).thenReturn(Optional.of(aluguel));
+        when(externoService.cobrar(ciclista.getId(), 10.0)).thenReturn(100L);
+        when(repository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(devolucaoRepository.save(any(Devolucao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(ciclistaService.readCiclista(ciclista.getId())).thenReturn(Optional.of(ciclista));
 
-		when(repository.findByBicicletaIdAndHoraFimIsNull(bicicletaId)).thenReturn(Optional.of(aluguel));
-		when(externoService.cobrar(ciclista.getId(), 10.0)).thenReturn(100L);
-		when(repository.save(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(ciclistaService.readCiclista(ciclista.getId())).thenReturn(Optional.of(ciclista));
+        ResponseEntity<Object> response = service.devolverBicicleta(bicicletaId, trancaId);
 
-		ResponseEntity<Object> response = service.devolverBicicleta(bicicletaId, trancaId);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Devolucao devolucaoSalva = (Devolucao) response.getBody();
+        assertNotNull(devolucaoSalva.getCobranca());
 
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		Aluguel resultado = (Aluguel) response.getBody();
-		assertEquals(1, resultado.getCobrancas().size());
-
-		verify(externoService).cobrar(ciclista.getId(), 10.0);
-		verify(equipamentosService).atualizarStatusBicicleta(bicicletaId, "DISPONIVEL");
-		verify(equipamentosService).atualizarStatusTranca(trancaId);
-		verify(externoService).enviarEmail(ciclista.getEmail(), "bicicleta devolvida!");
-	}
+        verify(externoService).cobrar(ciclista.getId(), 10.0);
+        verify(equipamentosService).atualizarStatusBicicleta(bicicletaId, "DISPONIVEL");
+        verify(equipamentosService).atualizarStatusTranca(trancaId);
+        verify(externoService).enviarEmail(ciclista.getEmail(), "bicicleta devolvida!");
+    }
 
 }
