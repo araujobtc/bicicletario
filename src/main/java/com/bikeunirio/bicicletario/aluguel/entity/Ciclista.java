@@ -23,24 +23,24 @@ public class Ciclista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@NotNull(message = "O status é obrigatório")
+    @NotNull(message = "O status é obrigatório")
     private String status;
-	
+
     private String nome;
     private LocalDate nascimento;
     private String cpf;
-	private String nacionalidade;
+    private String nacionalidade;
     private String email;
     private String urlFotoDocumento;
     private String senha;
 
-    @OneToOne(cascade = CascadeType.ALL) 
-    @JoinColumn(name = "passaporte_id") 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "passaporte_id")
     private Passaporte passaporte;
 
     @OneToOne(mappedBy = "ciclista", cascade = CascadeType.ALL)
     private Cartao cartao;
-    
+
     private LocalDateTime dataConfirmacaoEmail;
 
     public Long getId() {
@@ -48,14 +48,14 @@ public class Ciclista {
     }
 
     public String getStatus() {
-		return status;
-	}
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getNome() {
+    public String getNome() {
         return nome;
     }
 
@@ -74,10 +74,10 @@ public class Ciclista {
     public String getCpf() {
         return cpf;
     }
-    
+
     public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
+        this.cpf = cpf;
+    }
 
     public String getNacionalidade() {
         return nacionalidade;
@@ -114,30 +114,30 @@ public class Ciclista {
     public Passaporte getPassaporte() {
         return passaporte;
     }
-    
-	public void setPassaporte(Passaporte passaporte) {
-		this.passaporte = passaporte;
-	}	
-	
-	public MeioDePagamentoDTO getCartao() {
-	    MeioDePagamentoDTO dto = new MeioDePagamentoDTO();
-	    dto.setNomeTitular(this.cartao.getNomeTitular());
-	    dto.setNumero(this.cartao.getNumero());
-	    dto.setValidade(this.cartao.getValidade());
-	    dto.setCvv(this.cartao.getCvv());
-	    return dto;
-	}
+
+    public void setPassaporte(Passaporte passaporte) {
+        this.passaporte = passaporte;
+    }
+
+    public MeioDePagamentoDTO getCartao() {
+        MeioDePagamentoDTO dto = new MeioDePagamentoDTO();
+        dto.setNomeTitular(this.cartao.getNomeTitular());
+        dto.setNumero(this.cartao.getNumero());
+        dto.setValidade(this.cartao.getValidade());
+        dto.setCvv(this.cartao.getCvv());
+        return dto;
+    }
 
     public void setCartao(Cartao cartao) {
         this.cartao = cartao;
     }
 
-	public LocalDateTime getDataConfirmacaoEmail() {
-		return dataConfirmacaoEmail;
-	}
+    public LocalDateTime getDataConfirmacaoEmail() {
+        return dataConfirmacaoEmail;
+    }
 
-	public void setDataConfirmacaoEmail(LocalDateTime dataConfirmacaoEmail) {
-		this.dataConfirmacaoEmail = dataConfirmacaoEmail;
-	}
-    
+    public void setDataConfirmacaoEmail(LocalDateTime dataConfirmacaoEmail) {
+        this.dataConfirmacaoEmail = dataConfirmacaoEmail;
+    }
+
 }

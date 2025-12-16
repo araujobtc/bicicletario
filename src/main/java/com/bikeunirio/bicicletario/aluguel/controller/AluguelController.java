@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bikeunirio.bicicletario.aluguel.dto.AluguelRequestDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.DevolucaoRequestDTO;
+import com.bikeunirio.bicicletario.aluguel.entity.Aluguel;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
+import com.bikeunirio.bicicletario.aluguel.entity.Devolucao;
 import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
@@ -23,54 +25,73 @@ import jakarta.validation.Valid;
 @RequestMapping("/")
 public class AluguelController {
 
-	private AluguelService aluguelService;
-	private CiclistaService ciclistaService;
-	private EquipamentosService equipamentosService;
+    private AluguelService aluguelService;
+    private CiclistaService ciclistaService;
+    private EquipamentosService equipamentosService;
 
-	public AluguelController(AluguelService aluguelService, CiclistaService ciclistaService,
-			EquipamentosService equipamentosService) {
-		this.aluguelService = aluguelService;
-		this.ciclistaService = ciclistaService;
-		this.equipamentosService = equipamentosService;
-	}
+    public AluguelController(AluguelService aluguelService, CiclistaService ciclistaService,
+            EquipamentosService equipamentosService) {
+        this.aluguelService = aluguelService;
+        this.ciclistaService = ciclistaService;
+        this.equipamentosService = equipamentosService;
+    }
 
-	// UC16
+    // UC16
 
-	// Caso de uso 03
-	@PostMapping("/aluguel")
-	public ResponseEntity<Object> alugarBicicleta(@RequestBody @Valid AluguelRequestDTO aluguelRequestDTO) {
-		Long idCiclista = aluguelRequestDTO.getCiclista();
-		Long trancaInicio = aluguelRequestDTO.getTrancaInicio();
+    // Caso de uso 03
+    @PostMapping("/aluguel")
+    public ResponseEntity<Object> alugarBicicleta(
+            @RequestBody @Valid AluguelRequestDTO dto) {
 
-		Optional<Ciclista> responseCiclista = ciclistaService.readCiclista(idCiclista);
-		if (responseCiclista.isEmpty()) {
-			return GlobalExceptionHandler.notFound("Ciclista não encontrado");
-		}
-		Ciclista ciclista = responseCiclista.get();
+        Optional<Ciclista> ciclistaOpt = ciclistaService.readCiclista(dto.getCiclista());
 
-		if (!StatusCiclista.ATIVO.getDescricao().equals(ciclista.getStatus())) {
-			return GlobalExceptionHandler.unprocessableEntity("Ciclista não ativo para alugar bicicleta");
-		}
+        if (ciclistaOpt.isEmpty()) {
+            return GlobalExceptionHandler.notFound("Ciclista não encontrado");
+        }
 
-		if (aluguelService.isCiclistaComAluguelAtivo(idCiclista)) {
-			return GlobalExceptionHandler.unprocessableEntity("Ciclista já possui um aluguel ativo");
-		}
+        Ciclista ciclista = ciclistaOpt.get();
 
-		return aluguelService.alugarBicicleta(trancaInicio, ciclista);
-	}
+        if (!StatusCiclista.ATIVO.getDescricao().equals(ciclista.getStatus())) {
+            return GlobalExceptionHandler.unprocessableEntity(
+                    "Ciclista não está ativo");
+        }
 
-	// Casos de uso UC04 e UC16
-	@PostMapping("/devolucao")
-	public ResponseEntity<Object> devolverBicicleta(@RequestBody @Valid DevolucaoRequestDTO devolucaoRequestDTO) {
-		Long idBicicleta = devolucaoRequestDTO.getIdBicicleta();
-		Long idTranca = devolucaoRequestDTO.getIdTranca();
+        if (aluguelService.isCiclistaComAluguelAtivo(ciclista.getId())) {
+            return GlobalExceptionHandler.unprocessableEntity(
+                    "Ciclista já possui aluguel ativo");
+        }
 
-		if (!equipamentosService.isTrancaDisponivel(idTranca)) {
-			return GlobalExceptionHandler.unprocessableEntity("Esta tranca não esta disponivel");
-		}
+        Optional<Aluguel> aluguelOpt = aluguelService.alugar(dto.getTrancaInicio(), ciclista);
 
-		return aluguelService.devolverBicicleta(idBicicleta, idTranca);
-	}
+        if (aluguelOpt.isEmpty()) {
+            return GlobalExceptionHandler.unprocessableEntity(
+                    "Falha ao realizar aluguel");
+        }
 
-	// restaurar banco nao foi desenvolvido
+        return ResponseEntity.ok(aluguelOpt.get());
+    }
+
+
+    // Casos de uso UC04 e UC16
+    @PostMapping("/devolucao")
+    public ResponseEntity<Object> devolverBicicleta(
+            @RequestBody @Valid DevolucaoRequestDTO dto) {
+
+        if (!equipamentosService.isTrancaDisponivel(dto.getIdTranca())) {
+            return GlobalExceptionHandler.unprocessableEntity(
+                    "Tranca indisponível");
+        }
+
+        Optional<Devolucao> devolucaoOpt = aluguelService.devolver(dto.getIdBicicleta(), dto.getIdTranca());
+
+        if (devolucaoOpt.isEmpty()) {
+            return GlobalExceptionHandler.unprocessableEntity(
+                    "Bicicleta não possui aluguel ativo");
+        }
+
+        return ResponseEntity.ok(devolucaoOpt.get());
+    }
+
+
+    // restaurar banco nao foi desenvolvido
 }

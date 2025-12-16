@@ -4,16 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Aluguel;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
 import com.bikeunirio.bicicletario.aluguel.entity.Devolucao;
-import com.bikeunirio.bicicletario.aluguel.exception.GlobalExceptionHandler;
 import com.bikeunirio.bicicletario.aluguel.repository.AluguelRepository;
 import com.bikeunirio.bicicletario.aluguel.repository.DevolucaoRepository;
 import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
@@ -22,54 +18,51 @@ import com.bikeunirio.bicicletario.aluguel.webservice.ExternoService;
 @Service
 public class AluguelService {
 
-    private AluguelRepository aluguelRepository;
+    private final AluguelRepository aluguelRepository;
+    private final DevolucaoRepository devolucaoRepository;
+    private final EquipamentosService equipamentosService;
+    private final ExternoService externoService;
+    private final CiclistaService ciclistaService;
 
-    private DevolucaoRepository devolucaoRepository;
+    public AluguelService(
+            AluguelRepository aluguelRepository,
+            DevolucaoRepository devolucaoRepository,
+            CiclistaService ciclistaService,
+            ExternoService externoService,
+            EquipamentosService equipamentosService) {
 
-    private CiclistaService ciclistaService;
-
-    private EquipamentosService equipamentosService;
-
-    private ExternoService externoService;
-
-    public AluguelService(AluguelRepository aluguelRepository, DevolucaoRepository devolucaoRepository, CiclistaService ciclistaService, ExternoService externoService, EquipamentosService equipamentosService) {
         this.aluguelRepository = aluguelRepository;
         this.devolucaoRepository = devolucaoRepository;
         this.ciclistaService = ciclistaService;
-        this.equipamentosService = equipamentosService;
         this.externoService = externoService;
+        this.equipamentosService = equipamentosService;
     }
 
-    // GET bicicleta alugada
-
     public Optional<BicicletaDTO> getBicicletaPorIdCiclista(Long idCiclista) {
-        Optional<Aluguel> responseAluguel = aluguelRepository.findByCiclistaIdAndHoraFimIsNull(idCiclista);
-
-        if (responseAluguel.isEmpty()) {
-            return Optional.empty();
-        }
-        Aluguel aluguel = responseAluguel.get();
-
-        return equipamentosService.getBicicletaPorId(aluguel.getBicicletaId());
+        return aluguelRepository
+                .findByCiclistaIdAndHoraFimIsNull(idCiclista)
+                .flatMap(aluguel -> equipamentosService.getBicicletaPorId(aluguel.getBicicletaId()));
     }
 
     public boolean isCiclistaComAluguelAtivo(Long idCiclista) {
-        return aluguelRepository.findByCiclistaIdAndHoraFimIsNull(idCiclista).isPresent();
+        return aluguelRepository
+                .findByCiclistaIdAndHoraFimIsNull(idCiclista)
+                .isPresent();
     }
 
+    public Optional<Aluguel> alugar(Long trancaInicio, Ciclista ciclista) {
 
-    // alugar
-    public ResponseEntity<Object> alugarBicicleta(Long trancaInicio, Ciclista ciclista) {
-        Optional<Long> responseBicicleta = equipamentosService.getBicicletaPorIdTranca(trancaInicio);
-        if (responseBicicleta.isEmpty()) {
-            return GlobalExceptionHandler.unprocessableEntity("Não existe bicicleta disponível na tranca");
+        Optional<Long> bicicletaOpt = equipamentosService.getBicicletaPorIdTranca(trancaInicio);
+
+        if (bicicletaOpt.isEmpty()) {
+            return Optional.empty();
         }
-        Long bicicletaId = responseBicicleta.get();
 
-        // COMENT: editar na prox
-        Long idCobranca = externoService.realizarCobranca(ciclista.getId(), 10.0);
-        if (idCobranca == null) {
-            return GlobalExceptionHandler.unprocessableEntity("Falha na cobrança");
+        Long bicicletaId = bicicletaOpt.get();
+
+        Long cobrancaId = externoService.realizarCobranca(ciclista.getId(), 10.0);
+        if (cobrancaId == null) {
+            return Optional.empty();
         }
 
         Aluguel aluguel = new Aluguel();
@@ -77,62 +70,60 @@ public class AluguelService {
         aluguel.setBicicletaId(bicicletaId);
         aluguel.setTrancaInicio(trancaInicio);
         aluguel.setHoraInicio(LocalDateTime.now());
-        aluguel.setCobranca(idCobranca);
+        aluguel.setCobranca(cobrancaId);
 
-        externoService.enviarEmail(ciclista.getEmail(), "ALUGOU eeeeeeh!!!");
+        aluguelRepository.save(aluguel);
 
-        return ResponseEntity.ok(aluguelRepository.save(aluguel));
+        equipamentosService.atualizarStatusBicicleta(bicicletaId, "EM_USO");
+        equipamentosService.atualizarStatusTranca(trancaInicio);
 
+        externoService.enviarEmail(
+                ciclista.getEmail(),
+                "Bicicleta alugada com sucesso. ID: " + bicicletaId);
+
+        return Optional.of(aluguel);
     }
 
-    // devolver
+    public Optional<Devolucao> devolver(Long idBicicleta, Long idTranca) {
 
-    public ResponseEntity<Object> devolverBicicleta(Long idBicicleta, Long idTranca) {
-        Optional<Aluguel> responseAluguel = aluguelRepository.findByBicicletaIdAndHoraFimIsNull(idBicicleta);
-        if (responseAluguel.isEmpty()) {
-            return GlobalExceptionHandler.unprocessableEntity("Esta bicicleta não tem aluguel ativo");
+        Optional<Aluguel> aluguelOpt = aluguelRepository.findByBicicletaIdAndHoraFimIsNull(idBicicleta);
+
+        if (aluguelOpt.isEmpty()) {
+            return Optional.empty();
         }
 
-        Aluguel aluguel = responseAluguel.get();
+        Aluguel aluguel = aluguelOpt.get();
 
         LocalDateTime agora = LocalDateTime.now();
         aluguel.setHoraFim(agora);
         aluguel.setTrancaFim(idTranca);
 
-        Devolucao devolucao = new Devolucao();
+        aluguelRepository.save(aluguel);
 
+        Devolucao devolucao = new Devolucao();
         BeanUtils.copyProperties(aluguel, devolucao, "id", "cobranca");
 
-
         long minutosUso = java.time.Duration.between(aluguel.getHoraInicio(), agora).toMinutes();
-        if (minutosUso > 120) { // mais de 2 horas
+
+        if (minutosUso > 120) {
             long meiaHorasExtras = (minutosUso - 120) / 30;
-            double valorExtra = meiaHorasExtras * 5.0; // R$ 5,00 por cada meia hora extra
-            Long cobrancaId = externoService.cobrar(aluguel.getCiclista(), valorExtra);
-            devolucao.setCobranca(cobrancaId);
-        } else {
-            devolucao.setCobranca(null);
+            double valorExtra = meiaHorasExtras * 5.0;
+
+            Long cobrancaExtra = externoService.realizarCobranca(aluguel.getCiclista(), valorExtra);
+
+            devolucao.setCobranca(cobrancaExtra);
         }
 
-        Aluguel aluguelAtualizado = aluguelRepository.save(aluguel);
-        Devolucao registroDevolucao = devolucaoRepository.save(devolucao);
+        devolucaoRepository.save(devolucao);
 
         equipamentosService.atualizarStatusBicicleta(idBicicleta, "DISPONIVEL");
         equipamentosService.atualizarStatusTranca(idTranca);
 
-        Optional<Ciclista> responseCiclista = ciclistaService.readCiclista(aluguelAtualizado.getCiclista());
+        ciclistaService.readCiclista(aluguel.getCiclista())
+                .ifPresent(c -> externoService.enviarEmail(
+                        c.getEmail(),
+                        "Bicicleta devolvida com sucesso"));
 
-        if (responseCiclista.isEmpty()) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("X-Success-Message", "Dados do ciclista nao foram encontrados");
-
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        }
-
-        externoService.enviarEmail(responseCiclista.get().getEmail(), "bicicleta devolvida!");
-
-        return ResponseEntity.ok(registroDevolucao);
+        return Optional.of(devolucao);
     }
-
-
 }

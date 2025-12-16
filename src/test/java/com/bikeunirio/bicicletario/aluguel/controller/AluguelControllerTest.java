@@ -19,6 +19,7 @@ import com.bikeunirio.bicicletario.aluguel.dto.AluguelRequestDTO;
 import com.bikeunirio.bicicletario.aluguel.dto.DevolucaoRequestDTO;
 import com.bikeunirio.bicicletario.aluguel.entity.Aluguel;
 import com.bikeunirio.bicicletario.aluguel.entity.Ciclista;
+import com.bikeunirio.bicicletario.aluguel.entity.Devolucao;
 import com.bikeunirio.bicicletario.aluguel.enums.StatusCiclista;
 import com.bikeunirio.bicicletario.aluguel.service.AluguelService;
 import com.bikeunirio.bicicletario.aluguel.service.CiclistaService;
@@ -27,80 +28,78 @@ import com.bikeunirio.bicicletario.aluguel.webservice.EquipamentosService;
 @ExtendWith(MockitoExtension.class)
 class AluguelControllerTest {
 
-	@InjectMocks
-	private AluguelController controller;
+    @InjectMocks
+    private AluguelController controller;
 
-	@Mock
-	private AluguelService service;
+    @Mock
+    private AluguelService service;
 
-	@Mock
-	private CiclistaService ciclistaService;
+    @Mock
+    private CiclistaService ciclistaService;
 
-	@Mock
-	private EquipamentosService equipamentosService;
+    @Mock
+    private EquipamentosService equipamentosService;
 
-	// POST alugar
+    // POST alugar
 
-	@Test
-	void Status200AlugarBicicleta() throws Exception {
-		Long idCiclista = 10L;
-		Long idTranca = 5L;
+    @Test
+    void Status200AlugarBicicleta() throws Exception {
+        Long idCiclista = 10L;
+        Long idTranca = 5L;
 
-		AluguelRequestDTO request = new AluguelRequestDTO();
-		request.setCiclista(idCiclista);
-		request.setTrancaInicio(idTranca);
+        AluguelRequestDTO request = new AluguelRequestDTO();
+        request.setCiclista(idCiclista);
+        request.setTrancaInicio(idTranca);
 
-		Ciclista ciclista = new Ciclista();
-		ciclista.setStatus(StatusCiclista.ATIVO.getDescricao());
+        Ciclista ciclista = new Ciclista();
+        ciclista.setStatus(StatusCiclista.ATIVO.getDescricao());
 
-		Field idField = Ciclista.class.getDeclaredField("id");
-		idField.setAccessible(true);
-		idField.set(ciclista, idCiclista);
+        Field idField = Ciclista.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(ciclista, idCiclista);
 
-		when(ciclistaService.readCiclista(idCiclista)).thenReturn(Optional.of(ciclista));
-		when(service.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
+        when(ciclistaService.readCiclista(idCiclista))
+                .thenReturn(Optional.of(ciclista));
 
-		ResponseEntity<Object> responseEsperado = ResponseEntity.ok("aluguel criado");
-		when(service.alugarBicicleta(idTranca, ciclista)).thenReturn(responseEsperado);
+        when(service.isCiclistaComAluguelAtivo(idCiclista))
+                .thenReturn(false);
 
-		ResponseEntity<Object> response = controller.alugarBicicleta(request);
+        Aluguel aluguel = new Aluguel();
+        when(service.alugar(idTranca, ciclista))
+                .thenReturn(Optional.of(aluguel));
 
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals("aluguel criado", response.getBody());
+        ResponseEntity<Object> response = controller.alugarBicicleta(request);
 
-		verify(ciclistaService).readCiclista(idCiclista);
-		verify(service).isCiclistaComAluguelAtivo(idCiclista);
-		verify(service).alugarBicicleta(idTranca, ciclista);
-	}
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(aluguel, response.getBody());
 
-	// devolver bicicleta
-	
-	@Test
-	void deveDevolverBicicleta_CaminhoFeliz() {
-	    Long idBicicleta = 10L;
-	    Long idTranca = 5L;
+        verify(service).alugar(idTranca, ciclista);
+    }
 
-	    DevolucaoRequestDTO requestDTO = new DevolucaoRequestDTO();
-	    requestDTO.setIdBicicleta(idBicicleta);
-	    requestDTO.setIdTranca(idTranca);
+    // devolver bicicleta
 
-	    when(equipamentosService.isTrancaDisponivel(idTranca)).thenReturn(true);
+    @Test
+    void deveDevolverBicicleta_CaminhoFeliz() {
+        Long idBicicleta = 10L;
+        Long idTranca = 5L;
 
-	    Aluguel aluguel = new Aluguel();
-	    aluguel.setBicicletaId(idBicicleta);
-	    aluguel.setTrancaFim(idTranca);
+        DevolucaoRequestDTO request = new DevolucaoRequestDTO();
+        request.setIdBicicleta(idBicicleta);
+        request.setIdTranca(idTranca);
 
-	    ResponseEntity<Object> responseEsperado = ResponseEntity.ok(aluguel);
-	    when(service.devolverBicicleta(idBicicleta, idTranca)).thenReturn(responseEsperado);
+        when(equipamentosService.isTrancaDisponivel(idTranca))
+                .thenReturn(true);
 
-	    ResponseEntity<Object> response = controller.devolverBicicleta(requestDTO);
+        Devolucao devolucao = new Devolucao();
+        when(service.devolver(idBicicleta, idTranca))
+                .thenReturn(Optional.of(devolucao));
 
-	    assertEquals(HttpStatus.OK, response.getStatusCode());
-	    assertEquals(aluguel, response.getBody());
+        ResponseEntity<Object> response = controller.devolverBicicleta(request);
 
-	    verify(equipamentosService).isTrancaDisponivel(idTranca);
-	    verify(service).devolverBicicleta(idBicicleta, idTranca);
-	}
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(devolucao, response.getBody());
 
+        verify(service).devolver(idBicicleta, idTranca);
+    }
 
 }
