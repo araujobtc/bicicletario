@@ -35,7 +35,8 @@ class EquipamentosServiceTest {
         BicicletaDTO bicicleta = new BicicletaDTO();
         bicicleta.setId(10L);
 
-        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class))).thenReturn(new ResponseEntity<>(bicicleta, HttpStatus.OK));
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenReturn(new ResponseEntity<>(bicicleta, HttpStatus.OK));
 
         Optional<BicicletaDTO> resultado = service.getBicicletaPorId(10L);
 
@@ -45,9 +46,8 @@ class EquipamentosServiceTest {
 
     @Test
     void deveRetornarVazioQuandoBicicletaNaoEncontrada() {
-        when(restTemplate.getForEntity(
-                anyString(),
-                eq(BicicletaDTO.class))).thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
 
         Optional<BicicletaDTO> resultado = service.getBicicletaPorId(99L);
 
@@ -56,33 +56,40 @@ class EquipamentosServiceTest {
 
     @Test
     void deveAtualizarStatusBicicleta() {
-        service.atualizarStatusBicicleta(1L, "DISPONIVEL");
+        when(restTemplate.postForEntity(anyString(), isNull(), eq(Void.class)))
+                .thenReturn(ResponseEntity.ok().build());
+
+        boolean resultado = service.atualizarStatusBicicleta(1L, "DISPONIVEL");
+
+        assertEquals(true, resultado);
 
         verify(restTemplate).postForEntity(anyString(), isNull(), eq(Void.class));
     }
-
 
     @Test
     void deveAtualizarStatusTranca() {
-        service.atualizarStatusTranca(5L);
+        when(restTemplate.postForEntity(anyString(), isNull(), eq(Void.class)))
+                .thenReturn(ResponseEntity.ok().build());
+
+        boolean resultado = service.atualizarStatusTranca(5L);
+
+        assertEquals(true, resultado);
 
         verify(restTemplate).postForEntity(anyString(), isNull(), eq(Void.class));
     }
-
 
     @Test
     void deveRetornarBicicletaPorTranca() {
         BicicletaDTO bicicleta = new BicicletaDTO();
         bicicleta.setId(7L);
 
-        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class))).thenReturn(ResponseEntity.ok(bicicleta));
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenReturn(ResponseEntity.ok(bicicleta));
 
         Optional<BicicletaDTO> resultado = service.getBicicletaPorIdTranca(3L);
 
-        assertEquals(true, resultado.isPresent());
-
-        BicicletaDTO bicicletaResponse = resultado.get();
-        assertEquals(7L, bicicletaResponse.getId());
+        assertTrue(resultado.isPresent());
+        assertEquals(7L, resultado.get().getId());
     }
 
     @Test
@@ -105,4 +112,56 @@ class EquipamentosServiceTest {
         assertTrue(resultado.isEmpty());
     }
 
+    /**
+     * Teste agregado apenas para COBERTURA,
+     * sem verificação de número de chamadas
+     */
+    @Test
+    void deveCobrirCaminhosDeSucessoENaoSucesso() {
+
+        // ---------- getBicicletaPorId ----------
+        BicicletaDTO bicicleta = new BicicletaDTO();
+        bicicleta.setId(10L);
+
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenReturn(ResponseEntity.ok(bicicleta))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.NOT_FOUND))
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        assertTrue(service.getBicicletaPorId(10L).isPresent());
+        assertTrue(service.getBicicletaPorId(20L).isEmpty());
+        assertTrue(service.getBicicletaPorId(30L).isEmpty());
+
+        // ---------- getBicicletaPorIdTranca ----------
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenReturn(ResponseEntity.ok(bicicleta))
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        assertTrue(service.getBicicletaPorIdTranca(1L).isPresent());
+        assertTrue(service.getBicicletaPorIdTranca(2L).isEmpty());
+
+        // ---------- atualizarStatusBicicleta ----------
+        when(restTemplate.postForEntity(anyString(), isNull(), eq(Void.class)))
+                .thenReturn(ResponseEntity.ok().build())
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        assertEquals(true, service.atualizarStatusBicicleta(1L, "DISPONIVEL"));
+        assertEquals(false, service.atualizarStatusBicicleta(2L, "DISPONIVEL"));
+
+        // ---------- atualizarStatusTranca ----------
+        when(restTemplate.postForEntity(anyString(), isNull(), eq(Void.class)))
+                .thenReturn(ResponseEntity.ok().build())
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        assertEquals(true, service.atualizarStatusTranca(1L));
+        assertEquals(false, service.atualizarStatusTranca(2L));
+
+        // ---------- isTrancaDisponivel ----------
+        when(restTemplate.getForEntity(anyString(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok(new Object()))
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        assertEquals(true, service.isTrancaDisponivel(1L));
+        assertEquals(false, service.isTrancaDisponivel(2L));
+    }
 }

@@ -20,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.bikeunirio.bicicletario.aluguel.dto.MeioDePagamentoDTO;
+
 @ExtendWith(MockitoExtension.class)
 class ExternoServiceTest {
 
@@ -56,5 +58,44 @@ class ExternoServiceTest {
 
         verify(restTemplate).postForEntity(anyString(), any(), eq(String.class));
     }
+
+    @Test
+    void deveRetornarFalseQuandoCartaoForValido() {
+        MeioDePagamentoDTO cartao = new MeioDePagamentoDTO();
+
+        when(restTemplate.postForEntity(
+                anyString(),
+                any(),
+                eq(Void.class))).thenReturn(ResponseEntity.ok().build());
+
+        boolean resultado = service.isCartaoInvalido(cartao);
+
+        assertEquals(false, resultado);
+
+        verify(restTemplate).postForEntity(
+                anyString(),
+                any(),
+                eq(Void.class));
+    }
+
+    @Test
+    void deveRetornarTrueQuandoCartaoForInvalido() {
+        MeioDePagamentoDTO cartao = new MeioDePagamentoDTO();
+
+        when(restTemplate.postForEntity(
+                anyString(),
+                any(),
+                eq(Void.class))).thenThrow(new RuntimeException("Cartão inválido"));
+
+        boolean resultado = service.isCartaoInvalido(cartao);
+
+        assertEquals(true, resultado);
+
+        verify(restTemplate).postForEntity(
+                anyString(),
+                any(),
+                eq(Void.class));
+    }
+
 
 }
