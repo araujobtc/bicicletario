@@ -85,5 +85,24 @@ class EquipamentosServiceTest {
         assertEquals(7L, bicicletaResponse.getId());
     }
 
+    @Test
+    void deveRetornarVazioQuandoErroAoBuscarBicicleta() {
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        Optional<BicicletaDTO> resultado = service.getBicicletaPorId(1L);
+
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void deveRetornarVazioQuandoErroAoBuscarBicicletaPorTranca() {
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class)))
+                .thenThrow(new RuntimeException("Erro externo"));
+
+        Optional<BicicletaDTO> resultado = service.getBicicletaPorIdTranca(1L);
+
+        assertTrue(resultado.isEmpty());
+    }
 
 }
