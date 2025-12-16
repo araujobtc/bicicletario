@@ -35,9 +35,7 @@ class EquipamentosServiceTest {
         BicicletaDTO bicicleta = new BicicletaDTO();
         bicicleta.setId(10L);
 
-        when(restTemplate.getForEntity(
-                anyString(),
-                eq(BicicletaDTO.class))).thenReturn(new ResponseEntity<>(bicicleta, HttpStatus.OK));
+        when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class))).thenReturn(new ResponseEntity<>(bicicleta, HttpStatus.OK));
 
         Optional<BicicletaDTO> resultado = service.getBicicletaPorId(10L);
 
@@ -79,10 +77,12 @@ class EquipamentosServiceTest {
 
         when(restTemplate.getForEntity(anyString(), eq(BicicletaDTO.class))).thenReturn(ResponseEntity.ok(bicicleta));
 
-        Optional<Long> resultado = service.getBicicletaPorIdTranca(3L);
+        Optional<BicicletaDTO> resultado = service.getBicicletaPorIdTranca(3L);
 
         assertEquals(true, resultado.isPresent());
-        assertEquals(7L, resultado.get());
+
+        BicicletaDTO bicicletaResponse = resultado.get();
+        assertEquals(7L, bicicletaResponse.getId());
     }
 
 

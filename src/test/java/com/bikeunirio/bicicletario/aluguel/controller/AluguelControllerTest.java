@@ -58,15 +58,12 @@ class AluguelControllerTest {
         idField.setAccessible(true);
         idField.set(ciclista, idCiclista);
 
-        when(ciclistaService.readCiclista(idCiclista))
-                .thenReturn(Optional.of(ciclista));
+        when(ciclistaService.readCiclista(idCiclista)).thenReturn(Optional.of(ciclista));
 
-        when(service.isCiclistaComAluguelAtivo(idCiclista))
-                .thenReturn(false);
+        when(service.isCiclistaComAluguelAtivo(idCiclista)).thenReturn(false);
 
         Aluguel aluguel = new Aluguel();
-        when(service.alugar(idTranca, ciclista))
-                .thenReturn(Optional.of(aluguel));
+        when(service.alugar(idTranca, ciclista)).thenReturn(Optional.of(aluguel));
 
         ResponseEntity<Object> response = controller.alugarBicicleta(request);
 
@@ -87,12 +84,10 @@ class AluguelControllerTest {
         request.setIdBicicleta(idBicicleta);
         request.setIdTranca(idTranca);
 
-        when(equipamentosService.isTrancaDisponivel(idTranca))
-                .thenReturn(true);
+        when(equipamentosService.isTrancaDisponivel(idTranca)).thenReturn(true);
 
         Devolucao devolucao = new Devolucao();
-        when(service.devolver(idBicicleta, idTranca))
-                .thenReturn(Optional.of(devolucao));
+        when(service.devolver(idBicicleta, idTranca)).thenReturn(Optional.of(devolucao));
 
         ResponseEntity<Object> response = controller.devolverBicicleta(request);
 

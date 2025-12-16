@@ -26,21 +26,20 @@ public class ExternoService {
         this.restTemplate = restTemplate;
     }
 
-    // POST /enviarEmail
     public boolean enviarEmail(String emailDestinatario, String conteudo) {
-
-        String url = BASE_URL + "/enviarEmail";
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("email", emailDestinatario);
-        body.put("mensagem", conteudo);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
         try {
+            String url = BASE_URL + "/enviarEmail";
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("email", emailDestinatario);
+            body.put("assunto", "Bicicletario: Informativo");
+            body.put("mensagem", conteudo);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
             LOGGER.info("Email enviado com sucesso para {}", emailDestinatario);
@@ -52,18 +51,17 @@ public class ExternoService {
         }
     }
 
-    // POST /validaCartaoDeCredito
     public boolean isCartaoInvalido(MeioDePagamentoDTO cartao) {
-
-        String url = BASE_URL + "/validaCartaoDeCredito";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<MeioDePagamentoDTO> request = new HttpEntity<>(cartao, headers);
-
         try {
+            String url = BASE_URL + "/validaCartaoDeCredito";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<MeioDePagamentoDTO> request = new HttpEntity<>(cartao, headers);
+
             restTemplate.postForEntity(url, request, Void.class);
+
             return false; // cartão válido
         } catch (Exception e) {
             LOGGER.warn("Cartão inválido");
@@ -71,7 +69,6 @@ public class ExternoService {
         }
     }
 
-    // POST /cobranca
     @SuppressWarnings("rawtypes")
     public Long realizarCobranca(Long ciclistaId, double valor) {
 

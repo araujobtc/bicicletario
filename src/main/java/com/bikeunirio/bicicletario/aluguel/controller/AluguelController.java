@@ -40,10 +40,11 @@ public class AluguelController {
 
     // Caso de uso 03
     @PostMapping("/aluguel")
-    public ResponseEntity<Object> alugarBicicleta(
-            @RequestBody @Valid AluguelRequestDTO dto) {
+    public ResponseEntity<Object> alugarBicicleta(@RequestBody @Valid AluguelRequestDTO dto) {
+        Long idCiclista = dto.getCiclista();
+        Long trancaInicio = dto.getTrancaInicio();
 
-        Optional<Ciclista> ciclistaOpt = ciclistaService.readCiclista(dto.getCiclista());
+        Optional<Ciclista> ciclistaOpt = ciclistaService.readCiclista(idCiclista);
 
         if (ciclistaOpt.isEmpty()) {
             return GlobalExceptionHandler.notFound("Ciclista não encontrado");
@@ -52,20 +53,17 @@ public class AluguelController {
         Ciclista ciclista = ciclistaOpt.get();
 
         if (!StatusCiclista.ATIVO.getDescricao().equals(ciclista.getStatus())) {
-            return GlobalExceptionHandler.unprocessableEntity(
-                    "Ciclista não está ativo");
+            return GlobalExceptionHandler.unprocessableEntity("Ciclista não está ativo");
         }
 
         if (aluguelService.isCiclistaComAluguelAtivo(ciclista.getId())) {
-            return GlobalExceptionHandler.unprocessableEntity(
-                    "Ciclista já possui aluguel ativo");
+            return GlobalExceptionHandler.unprocessableEntity("Ciclista já possui aluguel ativo");
         }
 
-        Optional<Aluguel> aluguelOpt = aluguelService.alugar(dto.getTrancaInicio(), ciclista);
+        Optional<Aluguel> aluguelOpt = aluguelService.alugar(trancaInicio, ciclista);
 
         if (aluguelOpt.isEmpty()) {
-            return GlobalExceptionHandler.unprocessableEntity(
-                    "Falha ao realizar aluguel");
+            return GlobalExceptionHandler.unprocessableEntity("Falha ao realizar aluguel");
         }
 
         return ResponseEntity.ok(aluguelOpt.get());
@@ -78,15 +76,13 @@ public class AluguelController {
             @RequestBody @Valid DevolucaoRequestDTO dto) {
 
         if (!equipamentosService.isTrancaDisponivel(dto.getIdTranca())) {
-            return GlobalExceptionHandler.unprocessableEntity(
-                    "Tranca indisponível");
+            return GlobalExceptionHandler.unprocessableEntity("Tranca indisponível");
         }
 
         Optional<Devolucao> devolucaoOpt = aluguelService.devolver(dto.getIdBicicleta(), dto.getIdTranca());
 
         if (devolucaoOpt.isEmpty()) {
-            return GlobalExceptionHandler.unprocessableEntity(
-                    "Bicicleta não possui aluguel ativo");
+            return GlobalExceptionHandler.unprocessableEntity("Bicicleta não possui aluguel ativo");
         }
 
         return ResponseEntity.ok(devolucaoOpt.get());

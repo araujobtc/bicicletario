@@ -92,31 +92,33 @@ class AluguelServiceTest {
 
     @Test
     void deveAlugarBicicletaComSucesso() {
-        Ciclista ciclista = criarCiclista(1L, "email@test.com");
+        long idTranca = 5L;
+        long idBicicleta = 99L;
+        long idCobranca = 123L;
+        long idCiclista = 1L;
 
-        when(equipamentosService.getBicicletaPorIdTranca(5L))
-                .thenReturn(Optional.of(99L));
-        when(externoService.realizarCobranca(1L, 10.0))
-                .thenReturn(123L);
-        when(aluguelRepository.save(any()))
-                .thenAnswer(inv -> inv.getArgument(0));
+        Ciclista ciclista = criarCiclista(idCiclista, "email@test.com");
 
-        Optional<Aluguel> resultado = service.alugar(5L, ciclista);
+        BicicletaDTO bicicleta = new BicicletaDTO();
+        bicicleta.setId(idBicicleta);
+
+        when(equipamentosService.getBicicletaPorIdTranca(idTranca)).thenReturn(Optional.of(bicicleta));
+        when(externoService.realizarCobranca(idCiclista, 10.0)).thenReturn(idCobranca);
+        when(aluguelRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        Optional<Aluguel> resultado = service.alugar(idTranca, ciclista);
 
         assertTrue(resultado.isPresent());
 
         Aluguel aluguel = resultado.get();
-        assertEquals(99L, aluguel.getBicicletaId());
-        assertEquals(5L, aluguel.getTrancaInicio());
-        assertEquals(123L, aluguel.getCobranca());
+        assertEquals(idBicicleta, aluguel.getBicicletaId());
+        assertEquals(idTranca, aluguel.getTrancaInicio());
+        assertEquals(idCobranca, aluguel.getCobranca());
         assertNotNull(aluguel.getHoraInicio());
 
-        verify(equipamentosService)
-                .atualizarStatusBicicleta(99L, "EM_USO");
-        verify(equipamentosService)
-                .atualizarStatusTranca(5L);
-        verify(externoService)
-                .enviarEmail(eq("email@test.com"), anyString());
+        verify(equipamentosService).atualizarStatusBicicleta(bicicleta.getId(), "EM_USO");
+        verify(equipamentosService).atualizarStatusTranca(5L);
+        verify(externoService).enviarEmail(eq("email@test.com"), anyString());
     }
 
     @Test

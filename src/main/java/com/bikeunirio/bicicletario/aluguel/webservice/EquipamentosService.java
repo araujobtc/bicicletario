@@ -12,6 +12,8 @@ import com.bikeunirio.bicicletario.aluguel.dto.BicicletaDTO;
 public class EquipamentosService {
 
     private static final String BASE_URL = "https://bicicletarioequipamentos.onrender.com";
+    private static final String TRANCA_URL = BASE_URL + "/tranca/";
+    private static final String BICICLETA_URL = BASE_URL + "/bicicleta/";
 
     private final RestTemplate restTemplate;
 
@@ -19,12 +21,10 @@ public class EquipamentosService {
         this.restTemplate = restTemplate;
     }
 
-    // GET /bicicleta/{idBicicleta}
     public Optional<BicicletaDTO> getBicicletaPorId(Long idBicicleta) {
-
-        String url = BASE_URL + "/bicicleta/" + idBicicleta;
-
         try {
+            String url = BICICLETA_URL + idBicicleta;
+
             ResponseEntity<BicicletaDTO> response = restTemplate.getForEntity(url, BicicletaDTO.class);
 
             return Optional.ofNullable(response.getBody());
@@ -33,26 +33,22 @@ public class EquipamentosService {
         }
     }
 
-    // GET /tranca/{idTranca}/bicicleta
-    public Optional<Long> getBicicletaPorIdTranca(Long idTranca) {
-
-        String url = BASE_URL + "/tranca/" + idTranca + "/bicicleta";
-
+    public Optional<BicicletaDTO> getBicicletaPorIdTranca(Long idTranca) {
         try {
+            String url = TRANCA_URL + idTranca + "/bicicleta";
+
             ResponseEntity<BicicletaDTO> response = restTemplate.getForEntity(url, BicicletaDTO.class);
 
-            return Optional.ofNullable(response.getBody().getId());
+            return Optional.ofNullable(response.getBody());
         } catch (Exception e) {
             return Optional.empty();
         }
     }
 
-    // POST /tranca/{idTranca}/status/TRANCAR
     public boolean atualizarStatusTranca(Long idTranca) {
-
-        String url = BASE_URL + "/tranca/" + idTranca + "/status/TRANCAR";
-
         try {
+            String url = TRANCA_URL + idTranca + "/status/TRANCAR";
+
             restTemplate.postForEntity(url, null, Void.class);
             return true;
         } catch (Exception e) {
@@ -60,12 +56,10 @@ public class EquipamentosService {
         }
     }
 
-    // POST /bicicleta/{idBicicleta}/status/{acao}
     public boolean atualizarStatusBicicleta(Long idBicicleta, String status) {
-
-        String url = BASE_URL + "/bicicleta/" + idBicicleta + "/status/" + status;
-
         try {
+            String url = BICICLETA_URL + idBicicleta + "/status/" + status;
+
             restTemplate.postForEntity(url, null, Void.class);
             return true;
         } catch (Exception e) {
@@ -73,12 +67,10 @@ public class EquipamentosService {
         }
     }
 
-    // GET /tranca/{idTranca}
     public boolean isTrancaDisponivel(Long idTranca) {
-
-        String url = BASE_URL + "/tranca/" + idTranca;
-
         try {
+            String url = TRANCA_URL + idTranca;
+
             restTemplate.getForEntity(url, Object.class);
             return true;
         } catch (Exception e) {

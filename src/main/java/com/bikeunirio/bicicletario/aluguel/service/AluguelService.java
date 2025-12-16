@@ -52,13 +52,13 @@ public class AluguelService {
 
     public Optional<Aluguel> alugar(Long trancaInicio, Ciclista ciclista) {
 
-        Optional<Long> bicicletaOpt = equipamentosService.getBicicletaPorIdTranca(trancaInicio);
+        Optional<BicicletaDTO> bicicletaOpt = equipamentosService.getBicicletaPorIdTranca(trancaInicio);
 
         if (bicicletaOpt.isEmpty()) {
             return Optional.empty();
         }
 
-        Long bicicletaId = bicicletaOpt.get();
+        BicicletaDTO bicicleta = bicicletaOpt.get();
 
         Long cobrancaId = externoService.realizarCobranca(ciclista.getId(), 10.0);
         if (cobrancaId == null) {
@@ -67,19 +67,19 @@ public class AluguelService {
 
         Aluguel aluguel = new Aluguel();
         aluguel.setCiclista(ciclista);
-        aluguel.setBicicletaId(bicicletaId);
+        aluguel.setBicicletaId(bicicleta.getId());
         aluguel.setTrancaInicio(trancaInicio);
         aluguel.setHoraInicio(LocalDateTime.now());
         aluguel.setCobranca(cobrancaId);
 
         aluguelRepository.save(aluguel);
 
-        equipamentosService.atualizarStatusBicicleta(bicicletaId, "EM_USO");
+        equipamentosService.atualizarStatusBicicleta(bicicleta.getId(), "EM_USO");
         equipamentosService.atualizarStatusTranca(trancaInicio);
 
         externoService.enviarEmail(
                 ciclista.getEmail(),
-                "Bicicleta alugada com sucesso. ID: " + bicicletaId);
+                "Bicicleta alugada com sucesso. ID: " + bicicleta);
 
         return Optional.of(aluguel);
     }

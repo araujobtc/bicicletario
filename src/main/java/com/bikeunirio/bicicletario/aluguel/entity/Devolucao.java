@@ -13,7 +13,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "alugueis")
 public class Devolucao {
@@ -49,69 +51,4 @@ public class Devolucao {
     @Column(name = "cobranca_id")
     private Long cobranca;
 
-    // Getters e Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getCiclista() {
-        return ciclista != null ? ciclista.getId() : null;
-    }
-
-    public void setCiclista(Ciclista ciclista) {
-        this.ciclista = ciclista;
-    }
-
-    public Long getBicicletaId() {
-        return bicicletaId;
-    }
-
-    public void setBicicletaId(Long bicicletaId) {
-        this.bicicletaId = bicicletaId;
-    }
-
-    public Long getTrancaInicio() {
-        return trancaInicio;
-    }
-
-    public void setTrancaInicio(Long trancaInicio) {
-        this.trancaInicio = trancaInicio;
-    }
-
-    public Long getTrancaFim() {
-        return trancaFim;
-    }
-
-    public void setTrancaFim(Long trancaFim) {
-        this.trancaFim = trancaFim;
-    }
-
-    public LocalDateTime getHoraInicio() {
-        return horaInicio;
-    }
-
-    public void setHoraInicio(LocalDateTime horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public LocalDateTime getHoraFim() {
-        return horaFim;
-    }
-
-    public void setHoraFim(LocalDateTime horaFim) {
-        this.horaFim = horaFim;
-    }
-
-    public Long getCobranca() {
-        return cobranca;
-    }
-
-    public void setCobranca(Long cobranca) {
-        this.cobranca = cobranca;
-    }
 }
